@@ -102,7 +102,10 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 
 
 	/**
+	 * Vijay
 	 * @param Vtiger_Request $request
+	 *
+	 * @throws Exception
 	 */
 	function process_opportunity_created(Vtiger_Request $request) {
 
@@ -121,7 +124,6 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		$viewer->assign('MODULE_NAME', $this->moduleName);
 		$viewer->assign('IS_AJAX_ENABLED', $this->isAjaxEnabled($this->recordModel));
 		$viewer->assign('MODULE_MODEL', $this->moduleModel);
-		$viewer->assign('SHOW_CREATE_ACTIVITY_BUTTON', $this->checkToShowCreateActivityButton($request,'First Site Visit'));
 		$viewer->assign('PICKIST_DEPENDENCY_DATASOURCE', Vtiger_Functions::jsonEncode($this->picklistDependencyDatasource));
 
 		$viewer->assign('PROCESS_STAGE_FIELDS', $configModel->getAllProcessStageFields());
@@ -130,14 +132,15 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		$viewer->assign('PREVIOUS_PROCESS_STAGE', $configModel->previousProcessStage);
 		$viewer->assign('CURRENT_PROCESS_STAGE', $configModel->currentProcessStage);
 		$viewer->assign('NEXT_PROCESS_STAGE', $configModel->nextProcessStage);
+		$viewer->assign('MISSING_PROCESSES', Potentials_BasicAjax_Action::checkProcessStageCompletion($request, TRUE));
 
 		$templateName = $this->salesStageProcessFunctionName.'.tpl';
 		echo $viewer->view($templateName, $this->moduleName, true);
 		$this->displayNextActivityDetail($request,$this->recordModel->get('id'),$this->moduleName);
-
 	}
 
 	/**
+	 * Vijay
 	 * @param Vtiger_Request $request
 	 * @param string $sourceRecord
 	 * @param string $sourceModule
@@ -194,6 +197,7 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 
 
 	/**
+	 * Vijay
 	 * @param Vtiger_Request $request
 	 *
 	 * @return mixed
@@ -222,7 +226,7 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 			$moduleModel = $recordModel->getModule();
 
 			$relatedActivities = $moduleModel->getCalendarActivities('upcoming', $pagingModel, 'all', $recordId);
-
+			$NextActivity = array();
 			foreach($relatedActivities as $activityRecord) {
 				$NextActivity=$activityRecord;
 				break;
@@ -232,53 +236,15 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		}
 	}
 
+
 	/**
 	 * @param Vtiger_Request $request
-	 * @param $PlannedActivity
+	 * @param array $statusList
+	 * @param string $subject
+	 * @param string $type
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	function checkToShowCreateActivityButton(Vtiger_Request $request,$PlannedActivity) {
-		$moduleName = 'Calendar';
-		$moduleModel = Vtiger_Module_Model::getInstance($moduleName);
-
-		$showCreateActivityButton = 1;
-		$currentUserPrivilegesModel = Users_Privileges_Model::getCurrentUserPrivilegesModel();
-		if ($currentUserPrivilegesModel->hasModulePermission($moduleModel->getId())) {
-			$moduleName = $request->getModule();
-			$recordId = $request->get('record');
-
-			$pageNumber = $request->get('page');
-			if (empty($pageNumber)) {
-				$pageNumber = 1;
-			}
-			$pagingModel = new Vtiger_Paging_Model();
-			$pagingModel->set('page', $pageNumber);
-			$pagingModel->set('limit', 50);
-
-			if (!$this->record) {
-				$this->record = Vtiger_DetailView_Model::getInstance($moduleName, $recordId);
-			}
-			$recordModel = $this->record->getRecord();
-			$moduleModel = $recordModel->getModule();
-
-
-			$relatedActivities = $moduleModel->getAllCalendarActivities('', $pagingModel, 'all', $recordId);
-			foreach($relatedActivities as $activityRecord) {
-				if (stripos($activityRecord->get('subject'),$PlannedActivity) !== false) {
-					$showCreateActivityButton = 0;
-					if($activityRecord->get('activitytype') == 'Task') {
-						$activityStatus = $activityRecord->get('status');
-					} else {
-						$activityStatus = $activityRecord->get('eventstatus');
-					}
-				}
-			}
-
-		}
-		return $showCreateActivityButton;
-	}
-
 	function getActivityRecords(Vtiger_Request $request, $statusList=array(), $subject='', $type='') {
 		$moduleName = $request->getModule();
 		$recordId = $request->get('record');
@@ -312,5 +278,64 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 
 		return $relatedActivityList;
 	}
+
+	/**
+	 * Vijay
+	 * @param Vtiger_Request $request
+	 *
+	 * @return array
+	 */
+	function getRelatedRecords(Vtiger_Request $request) {
+		$parentId = $request->get('record');
+		$pageNumber = $request->get('page');
+		$limit = $request->get('limit');
+		$relatedModuleName = $request->get('relatedModule');
+		$orderBy = $request->get('orderby');
+		$sortOrder = $request->get('sortorder');
+		$whereCondition = $request->get('whereCondition');
+		$moduleName = $request->getModule();
+		//$relatedModuleInstance = Vtiger_Module_Model::getInstance($relatedModuleName);
+
+		$parentRecordModel = Vtiger_Record_Model::getInstanceById($parentId, $moduleName);
+		$relationListView = Vtiger_RelationListView_Model::getInstance($parentRecordModel, $relatedModuleName);
+		$relationModel = $relationListView->getRelationModel();
+		//$relatedModuleModel = $relationListView->getRelationModel()->getRelationModuleModel();
+
+		if(!empty($orderBy)) {
+			$relationListView->set('orderby', $orderBy);
+			$relationListView->set('sortorder', $sortOrder);
+		}
+
+		if(empty($pageNumber)) {
+			$pageNumber = 1;
+		}
+
+		$pagingModel = new Vtiger_Paging_Model();
+		$pagingModel->set('page', $pageNumber);
+		if(!empty($limit)) {
+			$pagingModel->set('limit', $limit);
+		}
+
+		if ($whereCondition) {
+			$relationListView->set('whereCondition', $whereCondition);
+		}
+
+		$models = $relationListView->getEntries($pagingModel);
+		$header = $relationListView->getHeaders();
+
+		$relatedRecords = array();
+		if($request->get('statusField') && $request->get('status')) {
+			foreach($models as $record) {
+				if(in_array($record->get($request->get('statusField')),$request->get('status'))) {
+					$relatedRecords[] = $record;
+				}
+			}
+		} else {
+			$relatedRecords = $models;
+		}
+
+		return array('records'=>$relatedRecords,'header'=>$header);
+	}
+
 
 }

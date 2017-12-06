@@ -402,24 +402,30 @@ Vtiger.Class("Vtiger_Detail_Js",{
             if(data.error){
                 param = {text:'Unable to update sales stage'};
                 app.helper.showAlertBox({'message' : param.text});
-            } else if((data.result.missingMandatoryFields.length === 0)&&(data.result.missingMandatoryActivities.length === 0)) {
-                param = {text:app.vtranslate('Mandatory Activities & Fields Complete!')};
+            } else if((data.result.missingMandatoryFields.length === 0)&&(data.result.missingMandatoryActivities.length === 0)&&(data.result.missingMandatoryRelatedRecords.length === 0)) {
+                param = {text:app.vtranslate('Mandatory Activities, Records & Fields Complete!')};
                 app.helper.showSuccessNotification({'message' : param.text});
 				completionStatus.fields = true;
                 completionStatus.activities = true;
+                completionStatus.relatedRecords = true;
             } else {
-            	var text='';
+            	var text='The following actions are recommended:<br><br>';
             	if(data.result.missingMandatoryFields.length !== 0) {
-                    text = 'The following fields are recommended:<br><br><ul>'+data.result.missingMandatoryFields.map(el=>'<li>'+el+'</li>').join('')+'</ul>';
+                    text = '<u><b>Fields</b></u><br><ul>'+data.result.missingMandatoryFields.map(el=>'<li>'+el+'</li>').join('')+'</ul>';
                     completionStatus.fields = false;
 				}
                 if(data.result.missingMandatoryActivities.length !== 0) {
             		missingMandatoryActivityList = data.result.missingMandatoryActivities.map(el=>'<li>'+el.activityType+' : '+el.subject+' ('+el.missingCount+')'+'</li>').join('');
-                    text += 'The following activites are recommended:<br><br><ul>'+missingMandatoryActivityList+'</ul>';
+                    text += '<u><b>Activites</b></u><br><ul>'+missingMandatoryActivityList+'</ul>';
                     completionStatus.activities = false;
 				}
-				text += 'Do you still want to proceed without fulfilling the recommendations?';
+                if(data.result.missingMandatoryRelatedRecords.length !== 0) {
+                    missingMandatoryRelatedRecordList = data.result.missingMandatoryRelatedRecords.map(el=>'<li>'+el.relatedModule+' : '+el.status+' ('+el.missingCount+')'+'</li>').join('');
+                    text += '<u><b>Related Records</b></u><br><ul>'+missingMandatoryRelatedRecordList+'</ul>';
+                    completionStatus.relatedRecords = false;
+                }
 
+				text += 'Do you still want to proceed without fulfilling the recommendations?';
 
                 app.helper.showConfirmationBox({'message' : text}).then(
                     function(e) {
@@ -436,6 +442,97 @@ Vtiger.Class("Vtiger_Detail_Js",{
             }
         });
 
+    },
+
+    /**
+     * Vijay
+     *
+     * @param buttonElement
+     */
+    openCreateRelatedRecord : function(buttonElement) {
+        var instance = this;
+        var elem = jQuery(buttonElement);
+        var url = elem.data('url');
+        var urlParams = {
+            returnmode : elem.data('return-mode'),
+            returntab_label : elem.data('returntab-label'),
+            returnrecord : elem.data('return-record'),
+            returnmodule : elem.data('return-module'),
+            returnview : elem.data('return-view'),
+            returnrelatedModuleName : elem.data('return-related-modulename'),
+            returnrelationId : elem.data('return-relation-id'),
+            relationOperation : elem.data('relation-operation'),
+            potential_id : elem.data('potential-id'),
+            account_id : elem.data('account-id'),
+            contact_id : elem.data('contact-id'),
+            subject : elem.data('subject')
+        };
+        urlParams[elem.data('status-field')] = elem.data('new-status');
+        var urlString = url+'&'+jQuery.param(urlParams);
+        //console.log(urlString);
+        window.location.href=urlString;
+    },
+
+    openModalWindow : function(e){
+        var elem = jQuery(e.currentTarget);
+        var recordId = elem.closest('tr').data('id');
+
+        var url = 'index.php?module=Calendar&view=QuickCreateFollowupAjax&record='+recordId;
+        var progressIndicatorInstance = jQuery.progressIndicator({});
+        AppConnector.request(url).then(
+            function(data){
+                if(data){
+                    progressIndicatorInstance.hide();
+                    app.showModalWindow(data, function(data){
+                        var createFollowupForm = data.find('form.followupCreateView');
+                        createFollowupForm.validationEngine(app.validationEngineOptions);
+                        app.registerEventForTimeFields(createFollowupForm);
+                        //Form submit
+                        createFollowupForm.submit(function(event){
+                            var createButton = jQuery(this).find('button.btn-success');
+                            createButton.attr('disabled','disabled');
+                            progressIndicatorInstance = jQuery.progressIndicator({});
+                            event.preventDefault();
+                            var result = createFollowupForm.validationEngine('validate');
+                            if(!result){
+                                createButton.removeAttr('disabled');
+                                progressIndicatorInstance.hide();
+                                return false;
+                            }
+                            var moduleName = jQuery(this).find("[name='module']").val();
+                            var recordId = jQuery(this).find("[name='record']").val();
+                            var followupStartDate = jQuery(this).find("[name='followup_date_start']").val();
+                            var followupStartTime = jQuery(this).find("[name='followup_time_start']").val();
+                            var action = jQuery(this).find("[name='action']").val();
+                            var mode = jQuery(this).find("[name='mode']").val();
+                            var defaultCallDuration = jQuery(this).find("[name='defaultCallDuration']").val();
+                            var defaultOtherEventDuration = jQuery(this).find("[name='defaultOtherEventDuration']").val();
+                            var params = {
+                                module : moduleName,
+                                action : action,
+                                mode : mode,
+                                record : recordId,
+                                followup_date_start : followupStartDate,
+                                followup_time_start : followupStartTime,
+                                defaultCallDuration : defaultCallDuration,
+                                defaultOtherEventDuration : defaultOtherEventDuration
+                            }
+                            AppConnector.request(params).then(function(data){
+                                app.hideModalWindow();
+                                progressIndicatorInstance.hide();
+                                if(data['result'].created){
+                                    //Update related listview and pagination
+                                    Vtiger_Detail_Js.reloadRelatedList();
+                                }
+                            });
+                        });
+                    });
+                }
+                else{
+                    progressIndicatorInstance.hide();
+                    Vtiger_Helper_Js.showPnotify(app.vtranslate('JS_NO_EDIT_PERMISSION',"Calendar"));
+                }
+            });
     },
 
 

@@ -145,7 +145,7 @@ class Potentials_Config_Model {
 		$this->process[] = array(
 			'processType' => 'relatedRecord',
 			'refId' => 7,
-			'relatedModule' => 'Quote',
+			'relatedModule' => 'Quotes',
 			'count' => 2,
 			'dependancyOn' => 6,
 			'dependancyCondition' => 'function::::checkToShowCreateQuoteBtn, array()',

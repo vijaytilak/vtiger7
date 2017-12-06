@@ -55,10 +55,12 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 	/**
 	 * Vijay
 	 * @param Vtiger_Request $request
+	 * @param bool $returnOption
 	 *
+	 * @return array
 	 * @throws Exception
 	 */
-	public function checkProcessStageCompletion(Vtiger_Request $request) {
+	public function checkProcessStageCompletion(Vtiger_Request $request, $returnOption=FALSE) {
 		$moduleName = $request->getModule();
 		$recordId = $request->get('record');
 		$recordModel = Vtiger_Record_Model::getInstanceById($recordId,$moduleName);
@@ -96,55 +98,43 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 			}
 		}
 
+		//Check if Mandatory Related Records are created
+		$missingMandatoryRelatedRecords = array();
+		foreach ($configModel->getMandatoryProcessStageRelatedRecords() as $key => $process) {
+			$getParams = array(
+				'module' => $moduleName,
+				'record' => $recordId,
+				'relatedModule' => $process['relatedModule'],
+				'page' => '1',
+				'limit' => '40',
+				'status' => $process['status'],
+				'statusField' => $process['statusFieldName']
+			);
+			$getRequest = new Vtiger_Request($getParams);
+			$models = Potentials_Detail_View::getRelatedRecords($getRequest);
+			$relatedRecords = $models['records'];
+			$recordCount = count($relatedRecords);
+			if($recordCount!=$process['count']) {
+				$process['missingCount'] = $process['count']-$recordCount;
+				$missingMandatoryRelatedRecords[] = $process;
+			}
+		}
 
-		$response = new Vtiger_Response();
 		$result = array(
-			"checked"=>TRUE,
-		    "missingMandatoryFields"=>$missingMandatoryFields,
+			"missingMandatoryFields"=>$missingMandatoryFields,
 			"missingMandatoryActivities"=>$missingMandatoryActivities,
-			"getMandatoryProcessStageActivities"=>$configModel->getMandatoryProcessStageActivities()
+			"missingMandatoryRelatedRecords"=>$missingMandatoryRelatedRecords,
 		);
 
-		$response->setResult($result);
-		$response->emit();
-	}
-
-	/**
-	 * @param Vtiger_Request $request
-	 *
-	 * @return mixed
-	 * @throws AppException
-	 */
-	function showRelatedRecords(Vtiger_Request $request) {
-		$parentId = $request->get('record');
-		$pageNumber = $request->get('page');
-		$limit = $request->get('limit');
-		$relatedModuleName = $request->get('relatedModule');
-		$moduleName = $request->getModule();
-
-		if(empty($pageNumber)) {
-			$pageNumber = 1;
+		if($returnOption) {
+			return $result;
+		} else {
+			$response = new Vtiger_Response();
+			$response->setResult($result);
+			$response->emit();
 		}
 
-		$pagingModel = new Vtiger_Paging_Model();
-		$pagingModel->set('page', $pageNumber);
-		if(!empty($limit)) {
-			$pagingModel->set('limit', $limit);
-		}
-
-		$parentRecordModel = Vtiger_Record_Model::getInstanceById($parentId, $moduleName);
-		$relationListView = Vtiger_RelationListView_Model::getInstance($parentRecordModel, $relatedModuleName);
-		$models = $relationListView->getEntries($pagingModel);
-		$header = $relationListView->getHeaders();
-
-		$viewer = $this->getViewer($request);
-		$viewer->assign('MODULE' , $moduleName);
-		$viewer->assign('RELATED_RECORDS' , $models);
-		$viewer->assign('RELATED_HEADERS', $header);
-		$viewer->assign('RELATED_MODULE' , $relatedModuleName);
-		$viewer->assign('PAGING_MODEL', $pagingModel);
-
-		return $viewer->view('SummaryWidgets.tpl', $moduleName, 'true');
 	}
+
 
 }

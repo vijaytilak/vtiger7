@@ -67,26 +67,26 @@
                                         </span>
                                     {if $FIELD_MODEL->isEditable() eq 'true' && $IS_AJAX_ENABLED && $FIELD_MODEL->isAjaxEditable() eq 'true' && $FIELD_MODEL->get('uitype') neq 69}
                                         <span class="hide edit">
-                                                {if $FIELD_DATA_TYPE eq 'multipicklist'}
-                                                    <input type="hidden"
-                                                           class="fieldBasicData"
-                                                           data-name='{$FIELD_MODEL->get('name')}[]' data-type="{$FIELD_DATA_TYPE}"
-                                                           data-displayvalue='{Vtiger_Util_Helper::toSafeHTML($FIELD_MODEL->getDisplayValue($FIELD_MODEL->get('fieldvalue')))}'
-                                                           data-value="{$FIELD_MODEL->get('fieldvalue')}"
-                                                    />
-                                                {else}
-                                                    <input type="hidden"
-                                                           class="fieldBasicData"
-                                                           data-name='{$FIELD_MODEL->get('name')}'
-                                                           data-type="{$FIELD_DATA_TYPE}"
-                                                           data-displayvalue='{Vtiger_Util_Helper::toSafeHTML($FIELD_MODEL->getDisplayValue($FIELD_MODEL->get('fieldvalue')))}'
-                                                           data-value="{$FIELD_MODEL->get('fieldvalue')}"
+                                            {if $FIELD_DATA_TYPE eq 'multipicklist'}
+                                                <input type="hidden"
+                                                       class="fieldBasicData"
+                                                       data-name='{$FIELD_MODEL->get('name')}[]' data-type="{$FIELD_DATA_TYPE}"
+                                                       data-displayvalue='{Vtiger_Util_Helper::toSafeHTML($FIELD_MODEL->getDisplayValue($FIELD_MODEL->get('fieldvalue')))}'
+                                                       data-value="{$FIELD_MODEL->get('fieldvalue')}"
                                                 />
-                                                {/if}
+                                            {else}
+                                                <input type="hidden"
+                                                       class="fieldBasicData"
+                                                       data-name='{$FIELD_MODEL->get('name')}'
+                                                       data-type="{$FIELD_DATA_TYPE}"
+                                                       data-displayvalue='{Vtiger_Util_Helper::toSafeHTML($FIELD_MODEL->getDisplayValue($FIELD_MODEL->get('fieldvalue')))}'
+                                                       data-value="{$FIELD_MODEL->get('fieldvalue')}"
+                                            />
+                                            {/if}
                                             </span>
                                         <span class="action">
-                                                <a href="#" onclick="return false;" class="editAction fa fa-pencil"></a>
-                                            </span>
+                                            <a href="#" onclick="return false;" class="editAction fa fa-pencil"></a>
+                                        </span>
                                     {/if}
                                 </td>
                             </tr>
@@ -99,22 +99,51 @@
     </div>
 
 
-
     {*Display Action Buttons*}
     {assign var=CALENDAR_MODEL value = Vtiger_Module_Model::getInstance('Calendar')}
-    {if $CALENDAR_MODEL->isPermitted('CreateView') && $SHOW_CREATE_ACTIVITY_BUTTON}
+    {if $CALENDAR_MODEL->isPermitted('CreateView') && $MISSING_PROCESSES['missingMandatoryActivities']}
         <div class="row">
             <div class="col-md-12 textAlignCenter" style="background: inherit; border: 0px">
-                <a href="#"
-                   class="badge label-warning"
-                   data-activity-type="Call"
-                   data-source-module="{$MODULE_NAME}"
-                   data-source-record="{$RECORD->get('id')}"
-                   data-ref-module="Events"
-                   data-contact-id="{$RECORD->get('contact_id')}"
-                   data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - Arrange First Site Visit"
-                   onclick="Vtiger_Detail_Js.openQuickCreateActivity(this)"
-                ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;Schedule a Call : Arrange First Site Visit</a>
+                {foreach item=PROCESS from=$MISSING_PROCESSES['missingMandatoryActivities']}
+                    <a href="#"
+                       class="badge label-default marginLeft10px marginRight10px"
+                       data-activity-type="{$PROCESS['activityType']}"
+                       data-source-module="{$MODULE_NAME}"
+                       data-source-record="{$RECORD->get('id')}"
+                       data-ref-module="{$PROCESS['relatedModule']}"
+                       data-contact-id="{$RECORD->get('contact_id')}"
+                       data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - {$PROCESS['subject']}"
+                       onclick="Vtiger_Detail_Js.openQuickCreateActivity(this)"
+                    ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;{$PROCESS['activityType']} : {$PROCESS['subject']}</a>
+                {/foreach}
+                {foreach item=PROCESS from=$MISSING_PROCESSES['missingMandatoryRelatedRecords']}
+                    {assign var=RELATEDRECORDMODULEMODEL value=Vtiger_Module_Model::getInstance($PROCESS['relatedModule'])}
+                    {assign var=MODULEBASICLINKS value=$RELATEDRECORDMODULEMODEL->getModuleBasicLinks()}
+                    {assign var=PARENT_RECORD_MODEL value=Vtiger_Record_Model::getInstanceById({$RECORD->get('id')}, {$MODULE_NAME})}
+                    {assign var=RELATION_LIST_VIEW value=Vtiger_RelationListView_Model::getInstance($PARENT_RECORD_MODEL, {$PROCESS['relatedModule']})}
+                    {assign var=RELATION_MODEL value=$RELATION_LIST_VIEW->getRelationModel()}
+
+                    <a href="#"
+                       class="badge label-default marginLeft10px marginRight10px"
+                       data-url="{$MODULEBASICLINKS[array_search('LBL_ADD_RECORD', array_column($MODULEBASICLINKS, 'linklabel'))]['linkurl']}"
+                       data-return-mode="showRelatedList"
+                       data-returntab-label="{$PROCESS['relatedModule']}"
+                       data-return-record="{$RECORD->get('id')}"
+                       data-return-module="{$MODULE_NAME}"
+                       data-return-view="Detail"
+                       data-return-related-modulename="{$PROCESS['relatedModule']}"
+                       data-return-relation-id="{$RELATION_MODEL->getId()}"
+                       data-relation-operation="TRUE"
+                       data-app="SALES"
+                       data-potential-id="{$RECORD->get('id')}"
+                       data-account-id="{$RECORD->get('related_to')}"
+                       data-contact-id="{$RECORD->get('contact_id')}"
+                       data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - {$PROCESS['subject']}"
+                       data-status-field="quotestage"
+                       data-new-status="Created"
+                       onclick="Vtiger_Detail_Js.openCreateRelatedRecord(this)"
+                    ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;New {vtlib_toSingular($PROCESS['relatedModule'])}</a>
+                {/foreach}
             </div>
         </div>
     {/if}
