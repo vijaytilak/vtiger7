@@ -25,7 +25,7 @@ class Calendar_QuickCreateCommentAjax_View extends Vtiger_QuickCreateAjax_View {
             $viewer->assign('USER_MODEL', Users_Record_Model::getCurrentUserModel());
             $viewer->assign('RECORD_MODEL', $recordModel);
 
-            $viewer->view('QuickCreateFollowup.tpl', $moduleName);
+            $viewer->view('QuickCreateComment.tpl', $moduleName);
         }        
 	}
     

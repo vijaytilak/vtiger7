@@ -129,58 +129,57 @@ Vtiger.Class("Vtiger_Detail_Js",{
     markAsCompleteFromHeader : function(e){
         var elem = jQuery(e);
         var recordId = elem.data('activity-record');
-        var sourceModule = elem.attr('source-module');
-        var sourceRecord = elem.attr('source-record');
-        var message = app.vtranslate('JS_CONFIRM_MARK_AS_HELD');
-        app.helper.showConfirmationBox({'message' : message}).then(
-            function(e) {
-                var params = {
-                    module : "Calendar",
-                    action : "SaveFollowupAjax",
-                    mode : "markAsHeldCompleted",
-                    record : recordId
-                };
-                AppConnector.request(params).then(function(data){
-                	var param='';
-                    if(data.error){
-                        param = {text:app.vtranslate('JS_PERMISSION_DENIED')};
-                        app.helper.showAlertBox({'message' : param.text});
-                    }
-                    else if(data.result.valid && data.result.markedascompleted){
+        var sourceModule = elem.data('source-module');
+        var sourceRecord = elem.data('source-record');
+        Vtiger_Detail_Js.markAsHeldCompleted(elem,recordId);
+        Vtiger_Detail_Js.quickCreateComment(recordId,sourceModule,sourceRecord);
 
-                        if(data.result.activitytype == 'Task') {
-                            param = {text:app.vtranslate('JS_TODO_MARKED_AS_COMPLETED')};
-						}
-                        else {
-                            param = {text:app.vtranslate('JS_EVENT_MARKED_AS_HELD')};
-						}
+    },
 
-                        jQuery(".markAsCompleteBtn").find("button").removeAttr("disabled").removeClass("btn-success");
-                        elem.attr("disabled","disabled").addClass("btn-success");
-                        app.helper.showSuccessNotification({'message' : param.text}); //can also use : showAlertBox
+    markAsHeldCompleted : function(elem,recordId) {
+        var params = {
+            module : "Calendar",
+            action : "SaveFollowupAjax",
+            mode : "markAsHeldCompleted",
+            record : recordId
+        };
+        AppConnector.request(params).then(function(data){
+            var param='';
+            if(data.error){
+                param = {text:app.vtranslate('JS_PERMISSION_DENIED')};
+                app.helper.showAlertBox({'message' : param.text});
+            }
+            else if(data.result.valid && data.result.markedascompleted){
+
+                if(data.result.activitytype == 'Task') {
+                    param = {text:app.vtranslate('JS_TODO_MARKED_AS_COMPLETED')};
+                }
+                else {
+                    param = {text:app.vtranslate('JS_EVENT_MARKED_AS_HELD')};
+                }
+
+                jQuery(".markAsCompleteBtn").find("button").removeAttr("disabled").removeClass("btn-success");
+                elem.attr("disabled","disabled").addClass("btn-success");
+                app.helper.showSuccessNotification({'message' : param.text}); //can also use : showAlertBox
 
 
-                        //var params = app.convertUrlToDataParams(recordUrl);
-                        //Reload Activities
-/*                        window.app.controller().loadRelatedListOfParent(6); OR
-						var tabElement = $("[data-label-key='ProcessView']");
-                        var urlAttributes;
-                        window.app.controller().loadSelectedTabContents(tabElement, urlAttributes);*/
+                //var params = app.convertUrlToDataParams(recordUrl);
+                //Reload Activities
+                /*                        window.app.controller().loadRelatedListOfParent(6); OR
+                                        var tabElement = $("[data-label-key='ProcessView']");
+                                        var urlAttributes;
+                                        window.app.controller().loadSelectedTabContents(tabElement, urlAttributes);*/
 
-						//Reload ProcessView & Active Tab
-                        var detailInstance = window.app.controller();
-                        detailInstance.reloadHeader();
-                        detailInstance.reloadActiveTab();
-                    }
-                    else{
-                        param = {text:app.vtranslate('JS_FUTURE_EVENT_CANNOT_BE_MARKED_AS_HELD')};
-                        app.helper.showAlertBox({'message' : param.text});
-                    }
-                });
-            },
-            function(error, err){
-                return false;
-            });
+                //Reload ProcessView & Active Tab
+                var detailInstance = window.app.controller();
+                detailInstance.reloadHeader();
+                detailInstance.reloadActiveTab();
+            }
+            else{
+                param = {text:app.vtranslate('JS_FUTURE_EVENT_CANNOT_BE_MARKED_AS_HELD')};
+                app.helper.showAlertBox({'message' : param.text});
+            }
+        });
     },
 
     /**
@@ -473,66 +472,117 @@ Vtiger.Class("Vtiger_Detail_Js",{
         window.location.href=urlString;
     },
 
-    openModalWindow : function(e){
-        var elem = jQuery(e.currentTarget);
-        var recordId = elem.closest('tr').data('id');
+    /**
+     * Vijay
+     * @param recordId
+     * @param callback
+     */
+    quickCreateComment : function(recordId,sourceModule,sourceRecord){
+        var instance = this;
+        var params = {
+            module : "Calendar",
+            view : "QuickCreateCommentAjax",
+            record : recordId
+        };
 
-        var url = 'index.php?module=Calendar&view=QuickCreateFollowupAjax&record='+recordId;
-        var progressIndicatorInstance = jQuery.progressIndicator({});
-        AppConnector.request(url).then(
+        var progressIndicatorElement = jQuery.progressIndicator();
+        AppConnector.request(params).then(
             function(data){
                 if(data){
-                    progressIndicatorInstance.hide();
-                    app.showModalWindow(data, function(data){
-                        var createFollowupForm = data.find('form.followupCreateView');
-                        createFollowupForm.validationEngine(app.validationEngineOptions);
-                        app.registerEventForTimeFields(createFollowupForm);
-                        //Form submit
-                        createFollowupForm.submit(function(event){
+                    app.showModalWindow(data, function(data) {
+                        progressIndicatorElement.progressIndicator({mode:'hide'});
+                        var createCommentForm = data.find('form.commentCreateView');
+                        createCommentForm.submit(function(event){
                             var createButton = jQuery(this).find('button.btn-success');
                             createButton.attr('disabled','disabled');
-                            progressIndicatorInstance = jQuery.progressIndicator({});
+                            progressIndicatorElement = jQuery.progressIndicator();
                             event.preventDefault();
-                            var result = createFollowupForm.validationEngine('validate');
-                            if(!result){
-                                createButton.removeAttr('disabled');
-                                progressIndicatorInstance.hide();
-                                return false;
-                            }
+
                             var moduleName = jQuery(this).find("[name='module']").val();
                             var recordId = jQuery(this).find("[name='record']").val();
-                            var followupStartDate = jQuery(this).find("[name='followup_date_start']").val();
-                            var followupStartTime = jQuery(this).find("[name='followup_time_start']").val();
+                            var comment = jQuery(this).find("[name='comment']").val();
                             var action = jQuery(this).find("[name='action']").val();
                             var mode = jQuery(this).find("[name='mode']").val();
-                            var defaultCallDuration = jQuery(this).find("[name='defaultCallDuration']").val();
-                            var defaultOtherEventDuration = jQuery(this).find("[name='defaultOtherEventDuration']").val();
+
+                            //Validate Comment
+                            if(!comment.trim()) {
+                                app.helper.showErrorNotification({'message' : 'Please enter a valid comment!'});
+                                createButton.attr('disabled',false);
+                                return false;
+                            }
+
+                            //Save to Description
                             var params = {
                                 module : moduleName,
                                 action : action,
                                 mode : mode,
                                 record : recordId,
-                                followup_date_start : followupStartDate,
-                                followup_time_start : followupStartTime,
-                                defaultCallDuration : defaultCallDuration,
-                                defaultOtherEventDuration : defaultOtherEventDuration
-                            }
+                                comment : comment
+                            };
                             AppConnector.request(params).then(function(data){
                                 app.hideModalWindow();
-                                progressIndicatorInstance.hide();
-                                if(data['result'].created){
-                                    //Update related listview and pagination
-                                    Vtiger_Detail_Js.reloadRelatedList();
+                                progressIndicatorElement.progressIndicator({mode:'hide'});
+                                if(data.result.created){
+                                    //var notificationParams = {text:'Comment Added!'};
+                                    //app.helper.showSuccessNotification({'message' : notificationParams.text});
+                                }
+                            });
+
+                            //Save to Potentials
+                            params = {
+                                module : 'ModComments',
+                                action : 'SaveAjax',
+                                commentcontent : comment,
+                                is_private : 0,
+                                relationOperation : true,
+                                sourceModule : sourceModule,
+                                sourceRecord : sourceRecord,
+                                related_to: sourceRecord
+                            };
+                            AppConnector.request(params).then(function(data){
+                                if(data.result){
+                                    var notificationParams = {text:'Comment Added!'};
+                                    app.helper.showSuccessNotification({'message' : notificationParams.text});
+                                    // Increment Comment Count in related tab
+                                    var tabElement = Vtiger_Detail_Js.getInstance().getTabByLabel("ModComments");
+                                    var relatedController = new Vtiger_RelatedList_Js(sourceRecord, sourceModule, tabElement, 'ModComments');
+                                    relatedController.updateRelatedRecordsCount(jQuery(tabElement).data('relation-id'),[1],true);
+                                    Vtiger_Detail_Js.getInstance().reloadActiveTab();
                                 }
                             });
                         });
                     });
                 }
                 else{
-                    progressIndicatorInstance.hide();
                     Vtiger_Helper_Js.showPnotify(app.vtranslate('JS_NO_EDIT_PERMISSION',"Calendar"));
                 }
-            });
+            }
+        );
+    },
+
+    /**vijay
+     *
+     */
+    addComment : function(e) {
+        var instance = this;
+        var elem = jQuery(e);
+        var recordId = elem.data('source-record-id');
+        var params = {
+            module : "Calendar",
+            view : "QuickCreateCommentAjax",
+            record : recordId
+        };
+        app.helper.showProgress();
+        app.request.get({'data': params}).then(
+            function (err, data) {
+                app.helper.hideProgress();
+                if (data) {
+                    app.helper.showModal(data, {'cb': function (modal) {
+                        }
+                    });
+                }
+            }
+        );
     },
 
 

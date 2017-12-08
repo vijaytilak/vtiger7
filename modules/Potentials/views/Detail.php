@@ -127,12 +127,31 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		$viewer->assign('PICKIST_DEPENDENCY_DATASOURCE', Vtiger_Functions::jsonEncode($this->picklistDependencyDatasource));
 
 		$viewer->assign('PROCESS_STAGE_FIELDS', $configModel->getAllProcessStageFields());
+		$viewer->assign('PROCESS_NAME', $configModel->processName);
 		$viewer->assign('PROCESS_LIST', $configModel->processList);
 		$viewer->assign('CURRENT_PROCESS', $configModel->currentProcess);
 		$viewer->assign('PREVIOUS_PROCESS_STAGE', $configModel->previousProcessStage);
 		$viewer->assign('CURRENT_PROCESS_STAGE', $configModel->currentProcessStage);
 		$viewer->assign('NEXT_PROCESS_STAGE', $configModel->nextProcessStage);
-		$viewer->assign('MISSING_PROCESSES', Potentials_BasicAjax_Action::checkProcessStageCompletion($request, TRUE));
+
+		$missingProcesses = Potentials_BasicAjax_Action::checkProcessStageCompletion($request, TRUE);
+		$missingMandatoryProcesses = array_merge($missingProcesses['missingMandatoryActivities'],$missingProcesses['missingMandatoryRelatedRecords']);
+		$minRefId=FALSE;
+		$highlightProcess=array();
+		foreach ($missingMandatoryProcesses as $key => $process) {
+			if((!$minRefId)||($minRefId && ($process['refId']<$minRefId))) {
+				$minRefId = $process['refId'];
+				$highlightProcess = $process;
+			}
+		}
+		if (false !== $key = array_search($highlightProcess, $missingProcesses['missingMandatoryActivities'])) {
+			$missingProcesses['missingMandatoryActivities'][$key]['highlight']=TRUE;
+		}
+		if (false !== $key = array_search($highlightProcess, $missingProcesses['missingMandatoryRelatedRecords'])) {
+			$missingProcesses['missingMandatoryRelatedRecords'][$key]['highlight']=TRUE;
+		}
+		$viewer->assign('MISSING_PROCESSES', $missingProcesses);
+
 
 		$templateName = $this->salesStageProcessFunctionName.'.tpl';
 		echo $viewer->view($templateName, $this->moduleName, true);

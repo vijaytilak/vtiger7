@@ -11,6 +11,7 @@
 
 class Potentials_Config_Model {
 
+	public $processName;
 	public $processList;
 	public $currentProcess;
 	public $previousProcessStage;
@@ -59,6 +60,8 @@ class Potentials_Config_Model {
 			'0' => 'Closed Lost',
 			'1' => 'Closed Won',
 		);
+
+		$this->processName = $processName;
 		$this->processList[$processName] = array();
 		$this->processList[$processName]['processStageList'] = $processStageList;
 		$this->processList[$processName]['processExitStageList'] = $processExitStageList;
@@ -162,7 +165,7 @@ class Potentials_Config_Model {
 			'dependancyCondition' => 'function::::isQuoteStageAccepted, array("count" => 1)',
 			'mandatory' => true,
 			'statusFieldName' => 'sostatus',
-			'status' => ['Accepted'],
+			'status' => ['Approved'],
 		);
 
 	}

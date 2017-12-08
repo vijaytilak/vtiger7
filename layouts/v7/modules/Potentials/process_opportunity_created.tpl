@@ -19,6 +19,7 @@
                 </span>
                 <i name="reloadHeader" class="fa fa-refresh" data-url="" type="button" href="javascript:void(0)"></i>
             </div>
+            {if !$NEXT_PROCESS_STAGE|in_array:$PROCESS_LIST['Generic']['processExitStageList']}
             <div class="pull-right">
                 <a href="#"
                    class="badge label-info"
@@ -30,6 +31,7 @@
                     <i title="Edit" class="fa fa-flag-checkered"></i>&nbsp&nbspComplete Sales Stage
                 </a>
             </div>
+            {/if}
         </div>
     </div>
 
@@ -101,12 +103,17 @@
 
     {*Display Action Buttons*}
     {assign var=CALENDAR_MODEL value = Vtiger_Module_Model::getInstance('Calendar')}
-    {if $CALENDAR_MODEL->isPermitted('CreateView') && $MISSING_PROCESSES['missingMandatoryActivities']}
+    {if $CALENDAR_MODEL->isPermitted('CreateView') && ($MISSING_PROCESSES['missingMandatoryActivities']||$MISSING_PROCESSES['missingMandatoryRelatedRecords'])}
         <div class="row">
             <div class="col-md-12 textAlignCenter" style="background: inherit; border: 0px">
                 {foreach item=PROCESS from=$MISSING_PROCESSES['missingMandatoryActivities']}
+                    {if $PROCESS['highlight'] eq TRUE}
+                        {assign var=HIGHLIGHT_CLASS value = 'label-warning'}
+                    {else}
+                        {assign var=HIGHLIGHT_CLASS value = 'label-default'}
+                    {/if}
                     <a href="#"
-                       class="badge label-default marginLeft10px marginRight10px"
+                       class="badge {$HIGHLIGHT_CLASS} marginLeft10px marginRight10px"
                        data-activity-type="{$PROCESS['activityType']}"
                        data-source-module="{$MODULE_NAME}"
                        data-source-record="{$RECORD->get('id')}"
@@ -116,7 +123,13 @@
                        onclick="Vtiger_Detail_Js.openQuickCreateActivity(this)"
                     ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;{$PROCESS['activityType']} : {$PROCESS['subject']}</a>
                 {/foreach}
+
                 {foreach item=PROCESS from=$MISSING_PROCESSES['missingMandatoryRelatedRecords']}
+                    {if $PROCESS['highlight'] eq TRUE}
+                        {assign var=HIGHLIGHT_CLASS value = 'label-warning'}
+                    {else}
+                        {assign var=HIGHLIGHT_CLASS value = 'label-default'}
+                    {/if}
                     {assign var=RELATEDRECORDMODULEMODEL value=Vtiger_Module_Model::getInstance($PROCESS['relatedModule'])}
                     {assign var=MODULEBASICLINKS value=$RELATEDRECORDMODULEMODEL->getModuleBasicLinks()}
                     {assign var=PARENT_RECORD_MODEL value=Vtiger_Record_Model::getInstanceById({$RECORD->get('id')}, {$MODULE_NAME})}
@@ -124,7 +137,7 @@
                     {assign var=RELATION_MODEL value=$RELATION_LIST_VIEW->getRelationModel()}
 
                     <a href="#"
-                       class="badge label-default marginLeft10px marginRight10px"
+                       class="badge {$HIGHLIGHT_CLASS} marginLeft10px marginRight10px"
                        data-url="{$MODULEBASICLINKS[array_search('LBL_ADD_RECORD', array_column($MODULEBASICLINKS, 'linklabel'))]['linkurl']}"
                        data-return-mode="showRelatedList"
                        data-returntab-label="{$PROCESS['relatedModule']}"
@@ -147,5 +160,4 @@
             </div>
         </div>
     {/if}
-
 {/strip}
