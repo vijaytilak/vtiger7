@@ -78,11 +78,75 @@ Vtiger.Class("VTEStore_Settings_Js",{
                         function(err,data){
                             app.helper.hideProgress();
                             if(err === null) {
-                                var params = {
-                                    message: data.message + '\n'+app.vtranslate('JS_PLEASE_WAIT'),
-                                };
-                                app.helper.showSuccessNotification(params);
-                                location.reload();
+                                if (data.error == '0'){
+                                    var params = {
+                                        message: data.message + '\n'+app.vtranslate('JS_PLEASE_WAIT'),
+                                    };
+                                    app.helper.showSuccessNotification(params);
+                                    location.reload();
+                                } else if (data.error == '1'){
+                                    var params = {
+                                        message: data.message,
+                                    };
+                                    app.helper.showErrorNotification(params);
+                                } else if (data.error == '2'){
+                                    var url = "index.php?module=VTEStore&parent=Settings&view=Settings&mode=changeUrl&c_id=" + data.c_id + "&oldUrl=" + data.message;
+                                    app.helper.hideModal().then(function(){
+                                        app.helper.showProgress();
+                                        app.request.post({'url': url}).then(
+                                            function(err,data){
+                                                if(err === null) {
+                                                    app.helper.hideProgress();
+                                                    app.helper.showModal(data, {'width': '900px',
+                                                        'cb': function (wizardContainer) {
+                                                            var form2 = wizardContainer.find('#frmChangeUrl');
+                                                            var params2 = app.validationEngineOptions;
+                                                            params2.submitHandler = function (form2) {
+                                                                $(form2).find('.error_content').html('');
+                                                                if ($(form2).find("#chkConfirm").prop("checked") != true){
+                                                                    var message = app.vtranslate('JS_YOU_MUST_AGREE_MOVE_YOUR_ACCOUNT');
+                                                                    $(form2).find('.error_content').html(message);
+                                                                    return false;
+                                                                }
+                                                                var formData = $(form2).serializeFormData();
+                                                                app.helper.showProgress();
+
+                                                                app.request.post({'data':formData}).then(
+                                                                    function(err,data){
+                                                                        app.helper.hideProgress();
+                                                                        if (err === null) {
+                                                                            if(data.message != '') {
+                                                                                var message = data.message;
+                                                                                $(form2).find('.error_content').html(message);
+                                                                                $("#frmChangeUrl img[alt='Refresh Image']").trigger("click");
+                                                                                return;
+                                                                            }else {
+                                                                                app.hideModalWindow();
+                                                                                var params = {'message': app.vtranslate('JS_MOVE_URL_SUCCESSFULLY') + '\n' + app.vtranslate('JS_PLEASE_WAIT')};
+                                                                                app.helper.showSuccessNotification(params);
+                                                                                //openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
+                                                                                setTimeout(function () {
+                                                                                    location.reload();
+                                                                                }, 5000);
+                                                                            }
+                                                                        } else {
+                                                                            var error = err.message;
+                                                                            var params = {title: 'Error', message: error};
+                                                                            app.helper.showErrorNotification(params);
+                                                                        }
+                                                                    }
+                                                                );
+                                                            };
+                                                            form2.vtValidate(params2);
+                                                        }
+                                                    });
+                                                }else{
+                                                    app.helper.hideProgress();
+                                                }
+                                            }
+                                        );
+                                    });
+                                }
                             }else{
                                 var params = {
                                     message: err.message,
@@ -154,7 +218,7 @@ Vtiger.Class("VTEStore_Settings_Js",{
             });
         });
         // Login, Create Account END
-
+                
         // Logout BEGIN
         jQuery(container).on('click', '#logoutVTEStore', function (e) {
             var element = jQuery(e.currentTarget);
@@ -360,8 +424,6 @@ Vtiger.Class("VTEStore_Settings_Js",{
             );
         });
         // Refresh to update new data from Chargify END
-
-
 
         // Upgrade VTiger Premium module BEGIN
         jQuery(container).on('click', '.UpgradeVTEStore', function (e) {
@@ -643,7 +705,7 @@ Vtiger.Class("VTEStore_Settings_Js",{
         // My Faq END
 
         // Forgot password BEGIN
-        jQuery("body").on('click', 'a[name="forgotPassword"]', function (e) {
+        /*jQuery("body").on('click', 'a[name="forgotPassword"]', function (e) {
             app.helper.hideModal().then(function(){
                 app.helper.showProgress();
                 var url = "index.php?module=VTEStore&parent=Settings&view=Settings&mode=ForgotPassword";
@@ -659,6 +721,60 @@ Vtiger.Class("VTEStore_Settings_Js",{
                         }
                     }
                 );
+            });
+        });*/
+        jQuery("body").find('a[name="forgotPassword"]').unbind("click");
+        jQuery("body").on('click', 'a[name="forgotPassword"]', function (e) {
+            app.helper.hideModal().then(function(){
+                app.helper.showProgress();
+                var forgotPasswordModal = jQuery(container).find('.forgotPassword').clone(true, true);
+                forgotPasswordModal.removeClass('hide');
+                var url = "index.php?module=VTEStore&parent=Settings&view=Settings&mode=ForgotPassword";
+                app.request.post({'url': url}).then( function(err,data){
+                    if(err === null) {
+                        app.helper.hideProgress();
+                        var modal_jQuery = app.helper.showModal(data, {
+                            'width': '400px', 'cb': function (modal) {
+                                app.helper.hideProgress();
+                                var form = modal.find('.forgotPasswordForm');
+                                var params = app.validationEngineOptions;
+                                params.submitHandler = function (frm) {
+                                    form.find('.error_content').html('');
+                                    var formData = $(frm).serializeFormData();
+                                    app.helper.showProgress();
+                                    app.request.post({'data': formData}).then(
+                                        function (err, data) {
+                                            app.helper.hideProgress();
+                                            if (err === null) {
+                                                if(data.message != '') {
+                                                    var message = data.message;
+                                                    form.find('.error_content').html(message);
+                                                    $("#captcha_container_1 img[alt='Refresh Image']").trigger("click");
+                                                    if (data.greater_five){
+                                                        form.find("[name='btnForgotPassword']").attr("disabled", "true");
+                                                    }
+                                                    return;
+                                                }else {
+                                                    app.hideModalWindow();
+                                                    var params = {'message': app.vtranslate('JS_RESET_PASSWORD')};
+                                                    app.helper.showSuccessNotification(params)
+                                                    //openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
+                                                    setTimeout(function () {
+                                                        location.reload();
+                                                    }, 5000);
+                                                }
+                                            } else {
+                                                var error = err.message;
+                                                var params = {title: 'Error', message: error};
+                                                app.helper.showErrorNotification(params)
+                                            }
+                                        }
+                                    );
+                                };
+                                form.vtValidate(params);
+                            }
+                        });
+                    }});
             });
         });
         // Forgot password END

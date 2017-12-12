@@ -170,6 +170,55 @@ class Potentials_Config_Model {
 
 	}
 
+	/**
+	 * Config : FSV Arranged
+	 */
+	function process_fsv_arranged() {
+
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 6,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => 5,
+			'mandatory' => true,
+			'activityType' => 'Meeting',
+			'subject' => 'First Site Visit',
+			'statusFieldName' => 'eventstatus',
+			'status' => ['Held'],
+		);
+	}
+
+	/**
+	 * Config : FSV Held
+	 */
+	function process_fsv_held() {
+
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 1,
+			'relatedModule' => 'Calendar',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => false,
+			'activityType' => 'Todo',
+			'subject' => 'Get Tech Support',
+			'statusFieldName' => 'status',
+			'status' => ['Completed'],
+		);
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 2,
+			'relatedModule' => 'Calendar',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => true,
+			'activityType' => 'Todo',
+			'subject' => 'Prepare Quote',
+			'statusFieldName' => 'status',
+			'status' => ['Completed'],
+		);
+	}
 
 
 	function filterAllFieldsFromConfig($process) {

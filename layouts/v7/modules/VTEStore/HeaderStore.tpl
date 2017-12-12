@@ -28,9 +28,14 @@
             <a href="javascript:void(0);" onclick="window.open('https://v2.zopim.com/widget/livechat.html?&key=1P1qFzYLykyIVMZJPNrXdyBilLpj662a=en', '_blank', 'location=yes,height=600,width=500,scrollbars=yes,status=yes');"> <img src="layouts/v7/modules/VTEStore/resources/images/livechat.png"/></a>
         </td>
 
-        {if $WARNINGS>0}
-            <td style="padding-left: 5px;"><button id="phpiniWarnings" name="phpiniWarnings" class="btn btn-danger">{vtranslate('Warnings', 'VTEStore')} ({$WARNINGS})</button></td>
+        {if $WARNINGS>0 && $ERROR_NUM==0}
+            <td style="padding-left: 5px;"><button id="phpiniWarnings" name="phpiniWarnings" class="btn btn-danger" style="margin-right:5px;">{vtranslate('Warnings', 'VTEStore')} ({$WARNINGS})</button></td>
+        {elseif $WARNINGS==0 && $ERROR_NUM>0}
+            <td style="padding-left: 5px;"><button id="phpiniWarnings" name="phpiniWarnings" class="btn btn-danger" style="margin-right:5px;">{vtranslate('Errors', 'VTEStore')} ({$ERROR_NUM})</button></td>
+        {elseif $WARNINGS>0 && $ERROR_NUM>0}
+            <td style="padding-left: 5px;"><button id="phpiniWarnings" name="phpiniWarnings" class="btn btn-danger" style="margin-right:5px;">{vtranslate('Warnings', 'VTEStore')} ({$WARNINGS}) {vtranslate('Errors', 'VTEStore')} ({$ERROR_NUM})</button></td>
         {/if}
+        
         <td style="padding-left: 5px;"><button id="FaqLink" name="FaqLink" class="btn btn-warning VTEStoreFAQ">{vtranslate('FAQ', 'VTEStore')}</button></td>
         {if $CUSTOMERLOGINED>0}
             <td style="padding-left: 5px;"><button id="MyAccountLink" name="MyAccountLink" class="btn btn-success">{vtranslate('LBL_MY_ACCOUNT', 'VTEStore')}</button></td>

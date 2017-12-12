@@ -40,7 +40,7 @@ jQuery(document).ready(function () {
                     newPannelHtml += data.html;
                     for (var i = 0; i < total; i++){
                         newPannelHtml += [  "<li>",
-                                                "<a data-name='" + settinglabels[i] +"' href='" + settingLinks[i] + "' class='menuItemLabel ' target='_blank'>" + settinglabels[i],
+                                                "<a data-name='" + settinglabels[i] +"' href='" + settingLinks[i]+"&openpremium=1" + "' class='menuItemLabel ' target='_blank'>" + settinglabels[i],
                                                     "<img id='23_menuItem' data-id='23' class='pinUnpinShortCut cursorPointer pull-right' data-actionurl='' data-pintitle='pin' data-unpintitle='Unpin' data-pinimageurl='layouts/v7/skins/images/pin.png' data-unpinimageurl='layouts/v7/skins/images/unpin.png' title='pin' src='layouts/v7/skins/images/pin.png' data-action='pin'>",
                                                 "</a>",
                                             "</li>"].join('');
@@ -48,8 +48,12 @@ jQuery(document).ready(function () {
                     
                     newPannelHtml += "</ul></div></div>";
                     $("#accordion").append(newPannelHtml);
-                    $("#newVtePrimiumPannel a[data-toggle='collapse']").trigger("click");
-                    
+
+                    var params = app.convertUrlToDataParams(window.location.href);
+                    if(app.getModuleName()=='VTEStore' || params.openpremium==1){
+                        $("#newVtePrimiumPannel a[data-toggle='collapse']").trigger("click");
+                    }
+
                     // Change label Vtiger Premium to Premium on left panel
                     if(OtherSetting.use_custom_header==1){
                         var VTEStoreBlock=jQuery("#newVtePrimiumPannel").hide();
@@ -86,35 +90,6 @@ jQuery(document).ready(function () {
 
     }
 
-    // Fix issue header broken
-    var vtversion=getVtigerVersion();
-    if(vtversion!='6.0.0'){
-        $(".menuBar").children(".span9").css("width","60%");
-        $(".menuBar").children(".span3").css("width","40%");
-    }
-
-
-    function getVtigerVersion(){
-        var version = '';
-        var scripts = document.getElementsByTagName("script")
-        for (var i = 0; i < scripts.length; ++i) {
-            var jsEle = jQuery(scripts[i]);
-            var src = jsEle.attr('src');
-            if(src != undefined && src != ''){
-                if(src.indexOf('.js?v=')>-1){
-                    var versionTmp = src.split('js?v=');
-                    version = versionTmp[1];
-                    break;
-                }else if(src.indexOf('.js?&v=')>-1){
-                    var versionTmp = src.split('.js?&v=');
-                    version = versionTmp[1];
-                    break;
-                }
-            }
-        }
-        return version;
-    }
-
     addVTPremiumIcon();
     function addVTPremiumIcon(){
         var url = "index.php?module=VTEStore&action=ActionAjax&mode=getDataForVTPremiumIcon";
@@ -134,66 +109,46 @@ jQuery(document).ready(function () {
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Login/Create Account</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid>0 && VTPremiumHeader.customer_status=='no_subscription'){
-                            var msg='Your trial will expire in '+VTPremiumHeader.remain_date+' days. Make sure to try out all the extensions! If you have questions on need support email us at <a href="mailto: support@vtexperts.com" target="_blank">support@vtexperts.com</a> or initiate chat on website <a href="https://www.vtexperts.com" target="_blank">vtexperts.com</a>';
+                            var msg='Your trial will expire in '+VTPremiumHeader.remain_date+' days. Make sure to try out all the extensions! If you have questions on need help email us at <br /> <a style="padding: 0px; width: 100%; text-align: center; display: inline-block; font-weight: bold;" href="mailto: help@vtexperts.com" target="_blank">help@vtexperts.com</a> <br /> or initiate chat on website <a style="padding: 0px;" href="https://www.vtexperts.com" target="_blank">vtexperts.com</a>';
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Go to Extension List</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid>0 && VTPremiumHeader.customer_status=='trial_expired'){
                             var bgColor='ff9966';
-                            var msg='Your trial has expired. Please sign up in order to continue using premium extensions. If you would like us to extend your trial,please email us at <a href="mailto: support@vtexperts.com" target="_blank">support@vtexperts.com</a>';
+                            var msg='Your trial has expired. Please sign up in order to continue using premium extensions. If you would like us to extend your trial,please email us at <a style="padding: 0px; width: 100%; text-align: center; display: inline-block; font-weight: bold;" href="mailto: help@vtexperts.com" target="_blank">help@vtexperts.com</a>';
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Signup</button>';
                             addLiTag=1;
                         }
 
-                        var VTPremiumIcon = '<span class="dropdown span settingIcons">';
-                        if(addLiTag==1){
-                            VTPremiumIcon += '<a class="dropdown-toggle" data-toggle="dropdown" href="#">';
-                            VTPremiumIcon +='<img style="width:25px; height:20px; border-radius: 50%; background-color: #'+bgColor+'" src="layouts/v7/modules/VTEStore/resources/images/VTPremiumIcon.png" >';
-                            VTPremiumIcon +='</a>';
-                            VTPremiumIcon +='<ul class="dropdown-menu pull-right" style="width: 400px;">';
-                            VTPremiumIcon +='<li style="padding: 5px 20px 5px 10px;">'+msg+'</li>';
-                            VTPremiumIcon +='<li class="divider"></li>';
-                            VTPremiumIcon +='<li style="text-align: center">'+btn+'</li>';
-                            VTPremiumIcon +='</ul>';
-                        }else{
-                            VTPremiumIcon += '<a href="index.php?module=VTEStore&parent=Settings&view=Settings">';
-                            VTPremiumIcon +='<img style="width:25px; height:20px; border-radius: 50%; background-color: #'+bgColor+'" src="layouts/v7/modules/VTEStore/resources/images/VTPremiumIcon.png" >';
-                            VTPremiumIcon +='</a>';
-                        }
-                        VTPremiumIcon +='</span>';
+                        var VTPremiumIcon = '';
 
-                        if(vtversion=='6.0.0'){
-                            var headerIcons = $('#headerLinks');
-                        }else if(vtversion=='7.0.0'){
-                            var headerIcons = $('#navbar ul.nav.navbar-nav');
-                            if(addLiTag==1){
-                                VTPremiumIcon = ['<li class="dropdown">',
-                                                          '<div style="margin-top: 13px;" class="">',
-                                                            '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="padding: 10px;">',
-                                                              '<img style="width:25px; height:20px; border-radius: 50%; background-color: #'+bgColor+'" src="layouts/v7/modules/VTEStore/resources/images/VTPremiumIcon.png" >',
-                                                            '</a>',
-                                                            '<div class="dropdown-menu" role="menu">',
-                                                              '<div class="row">',
-                                                                '<div class="col-lg-12" style="min-width: 350px; padding: 10px 30px;">'+msg+'</div>',
-                                                              '</div>',
-                                                              '<div class="clearfix">',
-                                                                '<hr style="margin: 10px 0 !important">',
-                                                                  '<div class="text-center">'+btn+'</div>',
-                                                                '</div>',
-                                                              '</div>',
-                                                            '</div>',
-                                                        '</li>'].join('');
-                            }else{
-                                VTPremiumIcon =['<li class="dropdown">',
-                                                        '<div style="margin-top: 13px;" class="">',
-                                                            '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="padding: 10px;">',
-                                                                '<img style="width:25px; height:20px; border-radius: 50%; background-color: #'+bgColor+'" src="layouts/v7/modules/VTEStore/resources/images/VTPremiumIcon.png" >',
-                                                            '</a>',
-                                                        '</div>',
-                                                    '</li>'].join('');
-                            }
+                        var headerIcons = $('#navbar ul.nav.navbar-nav');
+                        if(addLiTag==1){
+                            VTPremiumIcon =['<li>',
+                                              '<div style="margin-top: 13px;" class="dropdown">',
+                                                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="padding: 10px;">',
+                                                  '<img style="width:25px; height:20px; border-radius: 50%; background-color: #'+bgColor+'" src="layouts/v7/modules/VTEStore/resources/images/VTPremiumIcon.png" >',
+                                                '</a>',
+                                                '<div class="dropdown-menu" role="menu">',
+                                                  '<div class="row">',
+                                                    '<div class="col-lg-12" style="min-width: 350px; padding: 10px 30px;">'+msg+'</div>',
+                                                  '</div>',
+                                                  '<div class="clearfix">',
+                                                    '<hr style="margin: 10px 0 !important">',
+                                                      '<div class="text-center">'+btn+'</div>',
+                                                    '</div>',
+                                                  '</div>',
+                                                '</div>',
+                                            '</li>'].join('');
                         }else{
-                            var headerIcons = $('#headerLinksBig');
+                            VTPremiumIcon =[    '<li>',
+                                                    '<div style="margin-top: 13px;" class="">',
+                                                        '<a href="index.php?module=VTEStore&parent=Settings&view=Settings" role="button" style="padding: 10px;">',
+                                                            '<img style="width:25px; height:20px; border-radius: 50%; background-color: #'+bgColor+'" src="layouts/v7/modules/VTEStore/resources/images/VTPremiumIcon.png" >',
+                                                        '</a>',
+                                                    '</div>',
+                                                '</li>'].join('');
                         }
+                        
                         if (headerIcons.length > 0){
                             headerIcons.first().prepend(VTPremiumIcon);
                         }

@@ -28,11 +28,11 @@
                     <div class="col-md-9"><span><input type="checkbox" name="savePassword" value="1" checked> &nbsp; &nbsp;{vtranslate('LBL_REMEMBER_ME', 'VTEStore')}</span></div>
                     <div class="clearfix"></div>
                 </div>
-                {*<div class="control-group">
+                <div class="control-group">
                     <label class="col-md-3 control-label"></label>
                     <div class="col-md-9"><a href="javascript:void(0);" style="text-decoration: underline;" id="forgotPassword" name="forgotPassword"><u>{vtranslate('Forgot Password', 'VTEStore')}</u></a></div>
                     <div class="clearfix"></div>
-                </div>*}
+                </div>
             </div>
         </div>
         <div class="modal-footer">

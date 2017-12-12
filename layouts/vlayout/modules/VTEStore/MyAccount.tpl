@@ -45,6 +45,7 @@
             {else}
                 <a href="https://www.vtexperts.com/subscription-status/" target="_blank">{vtranslate('LBL_TRIAL', 'VTEStore')} <img width="12" height="12" border="0" alt="{vtranslate('no_subscription_tooltip', 'VTEStore')}" title="{vtranslate('no_subscription_tooltip', 'VTEStore')}"src="layouts/vlayout/modules/VTEStore/resources/images/tooltip.png"></a>
             {/if}
+            &nbsp;<button class="btn btn-success" type="button" id="btnRefresh" name="btnRefresh"><strong>{vtranslate('LBL_REFRESH', 'VTEStore')}</strong></button>
         </div>
     </div>
     <div class="control-group">

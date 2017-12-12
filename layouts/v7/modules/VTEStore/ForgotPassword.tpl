@@ -28,6 +28,11 @@
                                 <div id='captcha_container_1' class="col-md-9">{$CAPTCHADATA}</div>
                                 <div class="clearfix"></div>
                             </div>
+                            <div class="control-group">
+                                <label class="col-md-3 control-label"></label>
+                                <div class="col-md-9 redColor error_content"></div>
+                                <div class="clearfix"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -38,7 +43,7 @@
                                     <div class="pull-right cancelLinkContainer" style="margin-top:0px;">
                                         <a class="cancelLink" type="reset" data-dismiss="modal">{vtranslate('LBL_CANCEL', 'VTEStore')}</a>
                                     </div>
-                                    <button class="btn btn-success" type="submit" name="btnForgotPassword" id="btnForgotPassword"><strong>{vtranslate('LBL_SUBMIT', 'VTEStore')}</strong></button>
+                                    <button class="btn btn-success" type="submit" name="btnForgotPassword" id="btnForgotPassword" {if $GREATERFIVE == true} disabled='true' {/if}><strong>{vtranslate('LBL_SUBMIT', 'VTEStore')}</strong></button>
                                 </div>
                             </div>
                         </div>

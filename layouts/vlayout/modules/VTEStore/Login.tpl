@@ -22,6 +22,10 @@
             <span class="control-label"></span>
             <div class="controls"><span><input type="checkbox" name="savePassword" value="1" checked> &nbsp; &nbsp;{vtranslate('LBL_REMEMBER_ME', 'VTEStore')}</span></div>
         </div>
+        <div class="control-group">
+            <span class="control-label"></span>
+            <div class="controls"><a href="javascript:void(0);" style="text-decoration: underline;" id="forgotPassword" name="forgotPassword"><u>{vtranslate('Forgot Password', 'VTEStore')}</u></a></div>
+        </div>
     </div>
     <div class="modal-footer">
         <div class="row-fluid">

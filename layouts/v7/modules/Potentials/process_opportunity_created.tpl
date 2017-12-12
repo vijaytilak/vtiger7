@@ -157,7 +157,20 @@
                        onclick="Vtiger_Detail_Js.openCreateRelatedRecord(this)"
                     ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;New {vtlib_toSingular($PROCESS['relatedModule'])}</a>
                 {/foreach}
+
+                {foreach item=QUOTE from=$QUOTES_PREPARED}
+                    <a href="#"
+                       class="badge label-success marginLeft10px marginRight10px"
+                       data-source-module="{$MODULE_NAME}"
+                       data-source-record-id="{$RECORD->get('id')}"
+                       data-ref-module="Quotes"
+                       data-ref-record-id="{$QUOTE->get('id')}"
+                       onclick="Vtiger_Detail_Js.openDocumentDesigner(this)"
+                       title="{$QUOTE->get('subject')} (${$QUOTE->getDisplayValue('hdnGrandTotal')})"
+                    ><i title="Edit" class="fa fa-envelope-o"></i>&nbsp;&nbsp;Send Quote {$QUOTE->get('quote_no')}</a>
+                {/foreach}
             </div>
         </div>
     {/if}
+
 {/strip}

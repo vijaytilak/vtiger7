@@ -23,6 +23,20 @@ $(document).ready(function() {
     .control-group{
         margin-bottom: 10px !important;
     }
+    p.UpgradeTooltip {
+        text-align:left;
+        width: 400px;
+    }
+    .tooltip.fade.top.in{
+        z-index: 100000000;
+        width: 400px;
+    }
+    .tooltip.fade.top.in .tooltip-inner{
+        max-width: inherit;
+    }
+    .tooltip.top .tooltip-arrow{
+        margin-left: -97px;
+    }
 </style>
 <div class="container-fluid">
 <div class="widget_header row-fluid">
@@ -51,19 +65,22 @@ $(document).ready(function() {
                     <input type="hidden" name="extensionName" value="{$MODULE_DETAIL->module_name}" />
                     <input type="hidden" name="moduleAction" value="{if in_array($MODULE_DETAIL->module_name,$VTMODULES)}Upgrade{else}Install{/if}">
                     {if in_array($MODULE_DETAIL->module_name,$VTMODULES)}
+                        <img src="layouts/vlayout/skins/images/circle_question_mark.png" id="UpgradeTooltip" title="{vtranslate('LBL_UPGRADE_TOOLTIP', 'VTEStore')}" class="pull-left UpgradeTooltip" style="margin-right: 10px; padding-top: 5px;">
                         <div class="dropdown" style="float: left;">
-                            <button class="btn btn-warning dropdown-toggle {if $CUSTOMERLOGINED>0} authenticated{else}loginRequired{/if}" type="button" data-toggle="dropdown">{vtranslate('LBL_UPGRADE', 'VTEStore')}
+                            <button id="Upgrade{$MODULE_DETAIL->module_name}" class="btn btn-warning dropdown-toggle {if $CUSTOMERLOGINED>0} authenticated{else}loginRequired{/if}" type="button" data-toggle="dropdown">{vtranslate('LBL_UPGRADE', 'VTEStore')}
                             <span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <li class="oneclickInstallFree" data-message="{vtranslate('LBL_MESSAGE_INSTALLED_UPGRAGE_TO_STABLE', 'VTEStore')}" data-svn="stable"><a href="javascript: void(0);">{vtranslate('LBL_INSTALLED_UPGRAGE_TO_STABLE', 'VTEStore')}</a></li>
+                                <li class="oneclickInstallFree" data-message="{vtranslate('LBL_MESSAGE_INSTALLED_UPGRAGE_TO_STABLE', 'VTEStore')}" data-svn="stable"><a href="javascript: void(0);" id="UpgradeStable{$MODULE_DETAIL->module_name}">{vtranslate('LBL_INSTALLED_UPGRAGE_TO_STABLE', 'VTEStore')}</a></li>
                                 <li class="divider"></li>
-                                <li class="oneclickInstallFree" data-message="{vtranslate('LBL_MESSAGE_INSTALLED_UPGRAGE_TO_LASTEST', 'VTEStore')}" data-svn="lastest"><a href="javascript: void(0);">{vtranslate('LBL_INSTALLED_UPGRAGE_TO_LASTEST', 'VTEStore')}</a></li>
+                                <li class="oneclickInstallFree" data-message="{vtranslate('LBL_MESSAGE_INSTALLED_UPGRAGE_TO_LASTEST', 'VTEStore')}" data-svn="lastest"><a href="javascript: void(0);" id="UpgradeAlpha{$MODULE_DETAIL->module_name}">{vtranslate('LBL_INSTALLED_UPGRAGE_TO_LASTEST', 'VTEStore')}</a></li>
+                                <li class="divider"></li>
+                                <li class="oneclickRegenerateLicense" data-message="{vtranslate('LBL_MESSAGE_REGENERATE_LICENSE', 'VTEStore')}"><a href="javascript: void(0);" id="RegenerateLicense{$MODULE_DETAIL->module_name}">{vtranslate('LBL_REGENERATE_LICENSE', 'VTEStore')}</a></li>
                             </ul>
                         </div>&nbsp;&nbsp;
-                        <button class="btn btn {if $CUSTOMERLOGINED>0}authenticated{else}loginRequired{/if}">{vtranslate('LBL_INSTALLED', 'VTEStore')}</button>
+                        <button id="Installed{$MODULE_DETAIL->module_name}" class="btn btn {if $CUSTOMERLOGINED>0}authenticated{else}loginRequired{/if}">{vtranslate('LBL_INSTALLED', 'VTEStore')}</button>
                         &nbsp;&nbsp;<button id="uninstallExtension" class="btn btn-danger uninstallExtension">{vtranslate('LBL_UNINSTALL', 'VTEStore')}</button>
                     {else}
-                        <button class="oneclickInstallFree btn {if $CUSTOMERLOGINED>0}btn-success authenticated{else}loginRequired{/if}" data-svn="stable">{vtranslate('LBL_INSTALL', 'VTEStore')}</button>
+                        <button id="Install{$MODULE_DETAIL->module_name}" class="oneclickInstallFree btn {if $CUSTOMERLOGINED>0}btn-success authenticated{else}loginRequired{/if}" data-svn="stable">{vtranslate('LBL_INSTALL', 'VTEStore')}</button>
                     {/if}
                     <a class="cancelLink" type="reset" id="declineExtension" href="index.php?module=VTEStore&parent=Settings&view=Settings">{vtranslate('LBL_CANCEL', $MODULE)}</a>
                 </div>
@@ -72,14 +89,13 @@ $(document).ready(function() {
         </div>
         <div class="tabbable margin0px" style="padding-bottom: 20px;">
             <ul id="extensionTab" class="nav nav-tabs" style="margin-bottom: 0px; padding-bottom: 0px;">
-                <li class="active"><a href="#Overview" data-toggle="tab"><strong>{vtranslate('LBL_OVERVIEW', 'VTEStore')}</strong></a></li>
-                <li><a href="#Features" data-toggle="tab"><strong>{vtranslate('LBL_FEATURES', 'VTEStore')}</strong></a></li>
-                <li><a href="#LiveDemo" data-toggle="tab"><strong>{vtranslate('LBL_LIVE_DEMO', 'VTEStore')}</strong></a></li>
-                <li><a href="#Updates" data-toggle="tab"><strong>{vtranslate('LBL_UPDATES', 'VTEStore')}</strong></a></li>
-                <li><a href="#KnownIssues" data-toggle="tab"><strong>{vtranslate('LBL_KNOWN_ISSUES', 'VTEStore')}</strong></a></li>
+                <li {if $CURRENT_TAB eq 'Overview'} class="active" {/if}><a href="#Overview" data-toggle="tab1" onclick="location.href='index.php?module=VTEStore&parent=Settings&view=Settings&mode=getModuleDetail&extensionId={$MODULE_DETAIL->id}&extensionName={$MODULE_DETAIL->module_name}'"><strong>{vtranslate('LBL_OVERVIEW', 'VTEStore')}</strong></a></li>
+                <li {if $CURRENT_TAB eq 'Features'} class="active" {/if}><a href="#Features" data-toggle="tab"><strong>{vtranslate('LBL_FEATURES', 'VTEStore')}</strong></a></li>
+                <li {if $CURRENT_TAB eq 'LiveDemo'} class="active" {/if}><a href="#LiveDemo" data-toggle="tab"><strong>{vtranslate('LBL_LIVE_DEMO', 'VTEStore')}</strong></a></li>
+                <li {if $CURRENT_TAB eq 'Documentation'} class="active" {/if}><a href="#Documentation" data-toggle="tab"><strong>{vtranslate('LBL_DOCUMENTATION', 'VTEStore')}</strong></a></li>
             </ul>
             <div class="tab-content row-fluid boxSizingBorderBox" style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-top-width: 0px;">
-                <div class="tab-pane active" id="Overview">
+                <div class="tab-pane  {if $CURRENT_TAB eq 'Overview'} active {/if}" id="Overview">
                     <div class="span6">
                         <span>{$MODULE_DETAIL->short_description}</span>
                         <br><br><a class="btn btn-warning various iframe" href="{$MODULE_DETAIL->extvideolink}"><span class="glyphicon glyphicon-eye-open"></span>{vtranslate('LBL_WATCH_A_DEMO', 'VTEStore')}</a>
@@ -103,10 +119,9 @@ $(document).ready(function() {
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane row-fluid" id="Features">{$MODULE_DETAIL->features}</div>
-                <div class="tab-pane row-fluid" id="LiveDemo">{$MODULE_DETAIL->live_demo}</div>
-                <div class="tab-pane row-fluid" id="Updates">{$MODULE_DETAIL->updates}</div>
-                <div class="tab-pane row-fluid" id="KnownIssues">{$MODULE_DETAIL->knowissue}</div>
+                <div class="tab-pane row-fluid {if $CURRENT_TAB eq 'Features'} active {/if}" id="Features">{$MODULE_DETAIL->features}</div>
+                <div class="tab-pane row-fluid {if $CURRENT_TAB eq 'LiveDemo'} active {/if}" id="LiveDemo">{$MODULE_DETAIL->live_demo}</div>
+                <div class="tab-pane row-fluid {if $CURRENT_TAB eq 'Documentation'} active {/if}" id="Documentation">{$MODULE_DETAIL->userguide_link}</div>
             </div>
         </div>
     {else}
@@ -163,6 +178,17 @@ $(document).ready(function() {
             closeClick  : false,
             openEffect  : 'elastic',
             closeEffect : 'none'
+        });
+
+        // Tooltip
+        $("#UpgradeTooltip").tooltip({
+            html: true,
+            position: {
+                my: 'left+15 bottom', at: 'right bottom', of: '#UpgradeTooltip'
+            },
+
+            tooltipClass: "entry-tooltip-positioner",
+            track: true,
         });
     });
 </script>

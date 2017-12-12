@@ -10,7 +10,7 @@
         <form name="EditWorkflow" action="index.php" method="post" id="installation_step3" class="form-horizontal">
             <input type="hidden" class="step" value="3" />
 
-            <div class="padding1per" style="border:1px solid #ccc;">
+            <div class="padding1per" style="border:1px solid #ccc; padding: 1%;">
                 <label>
                     <strong>{vtranslate('LBL_INSTALLATION_COMPLETED',$QUALIFIED_MODULE)}</strong>
                 </label>

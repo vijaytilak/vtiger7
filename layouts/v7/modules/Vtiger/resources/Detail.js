@@ -585,6 +585,247 @@ Vtiger.Class("Vtiger_Detail_Js",{
         );
     },
 
+    openDocumentDesigner: function (buttonElement) {
+        var thisInstance = this;
+        var elem = jQuery(buttonElement);
+        var params = {
+            'action': 'ActionAjax',
+            'mode': 'getTemplate',
+            'module': 'QuotingTool',
+            'record': elem.data('ref-record-id'),
+            'rel_module': elem.data('ref-module')
+        };
+
+        app.request.post({data: params}).then(
+            function (err, data) {
+                app.helper.hideProgress();
+                if (err === null) {
+                    var templates = data;
+                    if (templates.length > 0) {
+                        var html = '<div class="modal myModal fade in" style="display: block;" aria-hidden="false">'
+                            + '<div class="modal-backdrop fade in"></div>'
+                            + '<div class="modal-dialog modal-lg">'
+                            + '<div class="modal-content">'
+                            + '<form class="form-horizontal" action="index.php">'
+                            + '<div class="modal-header">'
+                            + '<div class="clearfix">'
+                            + '<div class="pull-right">'
+                            + '<button type="button" class="close" aria-label="Close" data-dismiss="modal">'
+                            + '<span aria-hidden="true" class="fa fa-close"></span>'
+                            + '</button>'
+                            + '</div>'
+                            + '<h4 class="pull-left">' + app.vtranslate('Document Designer (Email/PDF)') + '</h4>'
+                            + '</div>'
+                            + '</div>'
+                            + '<div class="modal-body" style="overflow-y: auto;">'
+                            + '<table id="tableQuotingToolWidget">'
+                            + '<thead>'
+                            + '<th>' + app.vtranslate('Template Name') + '</th>'
+                            + '<th class="actions">' + app.vtranslate('PDF') + '</th>'
+                            + '<th class="actions">' + app.vtranslate('Email') + '</th>'
+                            + '</thead>'
+                            + '<tbody>';
+                        var template = null;
+                        if (templates && Array.isArray(templates)) {
+                            for (var i = 0; i < templates.length; i++) {
+                                template = templates[i];
+
+                                html += '<tr>' +
+                                    '<td>' + template.filename + '</td>' +
+                                    '<td><a href="javascript:;" data-action="dd_export" onclick="Vtiger_Detail_Js.documentDesignerAction(this)" data-module='+params.module+' data-record='+params.record+' data-template="' + template.id + '">' +
+                                    '<img src="layouts/v7/modules/QuotingTool/resources/img/icons/widget-pdf.png" /></a></td>' +
+                                    '<td><a href="javascript:;" data-action="dd_preview_and_send_email" onclick="Vtiger_Detail_Js.documentDesignerAction(this)" data-module='+params.module+' data-record='+params.record+'  data-template="' + template.id + '">' +
+                                    '<img src="layouts/v7/modules/QuotingTool/resources/img/icons/widget-mail.png" /></td>' +
+                                    '</tr>';
+                            }
+                        } else {
+                            html += templates;
+                        }
+
+                        html += '</tbody>'
+                            + '</table>'
+                            + '</div>'
+                            + '</form>'
+                            + '</div>'
+                            + '</div>'
+                            + '</div>';
+
+                        // css {'width': '600px'}
+                        app.helper.showModal(html, {
+                            'cb': function (data) {
+                                //// to do
+                                // if(jQuery('#hierarchyScroll').height() > 300){
+                                //     app.helper.showVerticalScroll(jQuery('#hierarchyScroll'), {
+                                //         setHeight: '680px',
+                                //         autoHideScrollbar: false,
+                                //     });
+                                // }
+                            }
+                        });
+
+                    }
+                } else {
+                    console.log(err);
+                }
+            }
+        );
+
+    },
+
+    /**
+     * Fn - registerWidgetActions
+     */
+    documentDesignerAction: function (buttonElement) {
+        var thisInstance = this;
+        var elem = jQuery(buttonElement);
+        var module = elem.data('module');
+        var recordId = elem.data('record');
+        var action = elem.data('action');
+        var templateId = elem.data('template');
+        var instanceQuotingToolJS = new QuotingToolJS();
+
+        // Export PDF
+        if(action=='dd_export') {
+            // Priority: 1. current button; 2. select box
+            if (!templateId) {
+                templateId = instanceQuotingToolJS.getSelectedTemplates();
+            }
+
+            if (templateId) {
+                document.location.href = 'index.php?module=QuotingTool&action=PDFHandler&mode=export&relmodule='
+                    + module + '&record=' + recordId + '&template_id=' + templateId;
+            }
+
+        }
+
+        // Send email
+        if(action=='dd_send_email') {
+            if (!templateId) {
+                templateId = instanceQuotingToolJS.getSelectedTemplates();
+            }
+
+            if (templateId) {
+                app.helper.showProgress();
+                var params = {
+                    'module': app.getModuleName,
+                    'view': 'SelectEmailFields',
+                    'mode': 'send_email',
+                    'relmodule': module,
+                    'record': recordId,
+                    'template_id': templateId
+                };
+
+                app.request.post({data: params}).then(
+                    function (err, data) {
+                        app.helper.hideProgress();
+
+                        if (err === null) {
+                            var callBackFunction = function (data) {
+                                var form = jQuery('#SendEmailFormStep1');
+                                var params = app.validationEngineOptions;
+                                params.onValidationComplete = function (form, valid) {
+                                    if (valid) {
+                                        app.helper.hideModal();
+                                        app.helper.showProgress();
+                                        var data = form.serializeFormData();
+                                        app.request.post({data: data}).then(
+                                            function (err, data) {
+                                                app.helper.hideProgress();
+
+                                                if (err === null) {
+                                                    app.helper.showSuccessNotification({
+                                                        'title': data.message
+                                                    });
+                                                } else {
+                                                    app.helper.showErrorNotification({
+                                                        'title': data.message
+                                                    });
+                                                }
+                                            }
+                                        );
+
+                                        return valid;
+                                    }
+                                };
+                                form.validationEngine(params);
+
+                                form.submit(function (e) {
+                                    e.preventDefault();
+                                })
+                            };
+
+                            // css {'width': '350px'}
+                            app.helper.showModal(data, {
+                                'cb': function (data) {
+                                    // to do
+                                    if (typeof callBackFunction == 'function') {
+                                        callBackFunction(data);
+                                    }
+                                }
+                            });
+                        } else {
+                            console.log(err);
+                        }
+                    }
+                );
+            }
+        }
+
+        // Preview and send email
+        if(action == 'dd_preview_and_send_email') {
+            if (!templateId) {
+                // get all selected templates
+                templateId = instanceQuotingToolJS.getSelectedTemplates();
+            }
+
+            if (!templateId) {
+                // Invalid template id
+                return;
+            }
+
+            // Show indicator
+            app.helper.showProgress();
+
+            var params = {
+                // 'type': 'POST',
+                // 'url': 'index.php?module=QuotingTool&view=EmailPreviewTemplate&record=' + recordId + '&template_id=' + templateId
+                // 'dataType': 'html',
+                // 'data': {
+                module: 'QuotingTool',
+                view: 'EmailPreviewTemplate',
+                record: recordId,
+                template_id: templateId
+                // }
+            };
+            app.request.post({data: params}).then(
+                function (err, data) {
+                    if (err === null) {
+                        // css {'width': '796px'}
+                        app.helper.hideModal().then(function () {
+                            app.helper.showModal(data, {
+                                'cb': function (data) {
+                                    // console.log('aaaa');
+                                    instanceQuotingToolJS.registerEventForEmailPopup();
+                                }
+                            });
+                        });
+                    } else {
+                        console.log(err);
+                    }
+                }
+            );
+        }
+
+
+        // Download PDF with signature
+        if(action=='dd_download_with_signature') {
+            if (templateId) {
+                document.location.href = 'index.php?module=QuotingTool&action=PDFHandler&mode=download_with_signature&relmodule='
+                    + module + '&record=' + recordId + '&template_id=' + templateId;
+            }
+        }
+
+    },
 
 
     checkSMSStatus: function(url) {

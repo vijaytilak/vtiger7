@@ -91,10 +91,13 @@
                                 <div class="font-x-x-large boxSizingBorderBox" style="cursor:pointer">
                                     <table style="width: 100%">
                                         <tr>
-                                            <td><h4>{$VTEMODULE->module_label}</h4></td>
+                                            <td class="extension_header" id="{$VTEMODULE->module_name}Label"><h4>{$VTEMODULE->module_label}</h4></td>
                                             <td style="text-align: right">
+                                            {if $VTEMODULE->userguide_link!=''}
+                                                <a href="index.php?module=VTEStore&parent=Settings&view=Settings&mode=getModuleDetail&extensionId={$VTEMODULE->id}&extensionName={$VTEMODULE->module_name}&tab=Documentation" target="_blank" title="{vtranslate('Documentation', 'VTEStore')}"><img src="layouts/v7/modules/VTEStore/resources/images/user_manual_filled1600.png" id="{$VTEMODULE->module_name}Documentation" style="width: 25px; height: 25px;"/></a>
+                                            {/if}
                                             {if $VTEMODULE->setting_url!='' && in_array($VTEMODULE->module_name,$VTMODULES)}
-                                                <a href="{$VTEMODULE->setting_url}" target="_blank"><img src="layouts/v7/modules/VTEStore/resources/images/setting.png" style="width: 25px; height: 25px;"/></a>
+                                                <a href="{$VTEMODULE->setting_url}" target="_blank" title="{vtranslate('Extension settings', 'VTEStore')}"><img src="layouts/v7/modules/VTEStore/resources/images/setting.png" id="{$VTEMODULE->module_name}Settings" style="width: 25px; height: 25px;"/></a>
                                             {/if}
                                             </td>
                                         </tr>
@@ -120,11 +123,13 @@
                                 </div>
                                 <div class="row-fluid">
                                     <div class="text-right">
-                                        <a class="grouped_elements" href="{$VTEMODULE->image}" rel="group{$VTEMODULE->id}"><button class="btn btn-warning" style="margin-right:5px;">{vtranslate('LBL_PREVIEW', 'VTEStore')}</button></a>
+                                        <a class="grouped_elements" href="{$VTEMODULE->image}" rel="group{$VTEMODULE->id}"><button id="Preview{$VTEMODULE->module_name}" class="btn btn-warning" style="margin-right:5px;">{vtranslate('LBL_PREVIEW', 'VTEStore')}</button></a>
                                         <div style="display: none">
                                             {assign var=previewImages value="||"|explode:$VTEMODULE->preview_image}
                                             {foreach item=previewImage from=$previewImages}
-                                                <a class="grouped_elements" rel="group{$VTEMODULE->id}" href="{$previewImage}"></a>
+                                                {if $previewImage@iteration > 1}
+                                                    <a class="grouped_elements" rel="group{$VTEMODULE->id}" href="{$previewImage}"></a>
+                                                {/if}
                                             {/foreach}
                                         </div>
                                         {literal}
@@ -132,12 +137,12 @@
                                                 jQuery("a.grouped_elements, a.iframe").fancybox();
                                             </script>
                                         {/literal}
-                                        <a href="{$VTEMODULE->extvideolink}" class="btn iframe various icon-video" ></a>
-                                        <button class="btn btnMoreDetail addButton" style="margin: 0px 8px;">{vtranslate('LBL_MORE_DETAILS', 'VTEStore')}</button>
+                                        <a id="VideoDemo{$VTEMODULE->module_name}" href="{$VTEMODULE->extvideolink}" class="btn iframe various icon-video" ></a>
+                                        <button id="MoreDetail{$VTEMODULE->module_name}" class="btn btnMoreDetail addButton" style="margin: 0px 8px;">{vtranslate('LBL_MORE_DETAILS', 'VTEStore')}</button>
                                         {if in_array($VTEMODULE->module_name,$VTMODULES)}
-                                            <button class="btn btn {if $CUSTOMERLOGINED>0}authenticated{else}loginRequired{/if}">{vtranslate('LBL_INSTALLED', 'VTEStore')}</button>
+                                            <button id="Installed{$VTEMODULE->module_name}" class="btn btn {if $CUSTOMERLOGINED>0}authenticated{else}loginRequired{/if}">{vtranslate('LBL_INSTALLED', 'VTEStore')}</button>
                                         {else}
-                                            <button class="oneclickInstallFree btn {if $CUSTOMERLOGINED>0}btn-success authenticated{else}loginRequired{/if}" data-svn="stable">{vtranslate('LBL_INSTALL', 'VTEStore')}</button>
+                                            <button id="Install{$VTEMODULE->module_name}" class="oneclickInstallFree btn {if $CUSTOMERLOGINED>0}btn-success authenticated{else}loginRequired{/if}" data-svn="stable">{vtranslate('LBL_INSTALL', 'VTEStore')}</button>
                                         {/if}
                                     </div>
                                     <div class="clearfix"></div>

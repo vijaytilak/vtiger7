@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-09-21 02:45:49
+<?php /* Smarty version Smarty-3.1.7, created on 2017-12-12 02:09:11
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Quotes\DetailViewHeaderTitle.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:2992059c327dd822861-16810129%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:283705a2f3a47831073-60686283%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '2992059c327dd822861-16810129',
+  'nocache_hash' => '283705a2f3a47831073-60686283',
   'function' => 
   array (
   ),
@@ -28,9 +28,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_59c327dd8c299',
+  'unifunc' => 'content_5a2f3a4793830',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_59c327dd8c299')) {function content_59c327dd8c299($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a2f3a4793830')) {function content_5a2f3a4793830($_smarty_tpl) {?>
 <div class="col-sm-6"><div class="record-header clearfix"><div class="hidden-sm hidden-xs recordImage bgquotes app-<?php echo $_smarty_tpl->tpl_vars['SELECTED_MENU_CATEGORY']->value;?>
 "><?php $_smarty_tpl->tpl_vars['IMAGE_DETAILS'] = new Smarty_variable($_smarty_tpl->tpl_vars['RECORD']->value->getImageDetails(), null, 0);?><?php  $_smarty_tpl->tpl_vars['IMAGE_INFO'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['IMAGE_INFO']->_loop = false;
  $_smarty_tpl->tpl_vars['ITER'] = new Smarty_Variable;

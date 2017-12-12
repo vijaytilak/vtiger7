@@ -134,6 +134,7 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		$viewer->assign('CURRENT_PROCESS_STAGE', $configModel->currentProcessStage);
 		$viewer->assign('NEXT_PROCESS_STAGE', $configModel->nextProcessStage);
 
+		//Missing Processes
 		$missingProcesses = Potentials_BasicAjax_Action::checkProcessStageCompletion($request, TRUE);
 		$missingMandatoryProcesses = array_merge($missingProcesses['missingMandatoryActivities'],$missingProcesses['missingMandatoryRelatedRecords']);
 		$minRefId=FALSE;
@@ -152,6 +153,21 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		}
 		$viewer->assign('MISSING_PROCESSES', $missingProcesses);
 
+		//Related Quotes waiting to be Sent
+		$getParams = array(
+			'module' => $this->moduleName,
+			'record' => $this->recordId,
+			'relatedModule' => 'Quotes',
+			'page' => '1',
+			'limit' => '40',
+			'status' => ['Prepared'],
+			'statusField' => 'quotestage'
+		);
+		$getRequest = new Vtiger_Request($getParams);
+		$models = $this->getRelatedRecords($getRequest);
+		$quotesPrepared = $models['records'];
+		$recordCount = count($quotesPrepared);
+		$viewer->assign('QUOTES_PREPARED', $quotesPrepared);
 
 		$templateName = $this->salesStageProcessFunctionName.'.tpl';
 		echo $viewer->view($templateName, $this->moduleName, true);

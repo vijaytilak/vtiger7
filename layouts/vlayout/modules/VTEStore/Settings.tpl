@@ -100,6 +100,8 @@
                         <li class="upgradeAllExtensions" data-message="{vtranslate('LBL_MESSAGE_INSTALLED_UPGRAGE_ALL_TO_STABLE', 'VTEStore')}" data-svn="stable"><a href="javascript: void(0);">{vtranslate('LBL_INSTALLED_UPGRAGE_TO_STABLE', 'VTEStore')}</a></li>
                         <li class="divider"></li>
                         <li class="upgradeAllExtensions" data-message="{vtranslate('LBL_MESSAGE_INSTALLED_UPGRAGE_ALL_TO_LASTEST', 'VTEStore')}" data-svn="lastest"><a href="javascript: void(0);">{vtranslate('LBL_INSTALLED_UPGRAGE_TO_LASTEST', 'VTEStore')}</a></li>
+                        <li class="divider"></li>
+                        <li class="regenerateLicenseAll" data-message="{vtranslate('LBL_MESSAGE_REGENERATE_LICENSE_ALL', 'VTEStore')}"><a href="javascript: void(0);">{vtranslate('LBL_REGENERATE_LICENSE', 'VTEStore')}</a></li>
                     </ul>
                 </div>&nbsp;&nbsp;
             {/if}

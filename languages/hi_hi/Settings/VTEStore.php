@@ -29,5 +29,8 @@ $jsLanguageStrings = array(
     'JS_UPGRADING_ALL_EXTENSIONS'=>'Upgrading all extensions',
     'JS_REGENERATING_LICENSE'=>'Regenerating License...',
     'JS_MSG_REFRESH'=>'If you just signed and the status is still trial/expired - please click Yes to retrieve the latest account data. Note, this process might take up to 2 minutes',
+    'JS_RESET_PASSWORD'=>'Your request has been submitted, please check your email.',
+    'JS_YOU_MUST_AGREE_MOVE_YOUR_ACCOUNT'=>'You must agree to move your account to new VTiger instance.',
+    'JS_MOVE_URL_SUCCESSFULLY'=>'Your account has been moved, you can now install and use VTiger extensions.',
     ''=>'',
 );

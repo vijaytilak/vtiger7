@@ -34,5 +34,12 @@
 			  PRIMARY KEY (`name`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;]]></sql>
 		</table>
+		<table>
+			<name>vtestore_forgotpwd</name>
+			<sql><![CDATA[CREATE TABLE `vtestore_forgotpwd` (
+			  `userid` int NULL,
+			  `created_on` datetime NULL
+			) ENGINE=InnoDB DEFAULT CHARSET=latin1;]]></sql>
+		</table>
 	</tables>
 </schema>

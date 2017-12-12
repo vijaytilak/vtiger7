@@ -141,9 +141,19 @@ jQuery.Class("VTEStore_Settings_Js",{
                                 progressIndicatorElement.progressIndicator({'mode': 'hide'});
                                 app.hideModalWindow();
                                 if (data.success) {
-                                    var params = {type: 'success', text: data.result.message + '\n'+app.vtranslate('JS_PLEASE_WAIT')};
-                                    Settings_Vtiger_Index_Js.showMessage(params);
-                                    location.reload();
+                                    if (data.result.error == '0'){
+                                        var params = {
+                                            message: data.result.message + '\n'+app.vtranslate('JS_PLEASE_WAIT'),
+                                        };
+                                        var params = {type: 'success', text: data.result.message + '\n'+app.vtranslate('JS_PLEASE_WAIT')};
+                                        Settings_Vtiger_Index_Js.showMessage(params);
+                                        location.reload();
+                                    } else if (data.result.error == '1'){
+                                        var params = {type: 'error', text: data.result.message};
+                                        Settings_Vtiger_Index_Js.showMessage(params);
+                                    } else if (data.result.error == '2'){
+                                        thisInstance.changeNewUrl(data.result.c_id, data.result.message);
+                                    }
                                 } else {
                                     var params = {type: 'error', text: data.error.message};
                                     Settings_Vtiger_Index_Js.showMessage(params);
@@ -268,6 +278,127 @@ jQuery.Class("VTEStore_Settings_Js",{
             );
         });
         // Install Extension END
+
+        // Regenerate License BEGIN
+        jQuery(container).on('click', '.oneclickRegenerateLicense', function (e) {
+            var element = jQuery(e.currentTarget);
+            var extensionContainer = element.closest('.extension_container');
+            var extensionId = extensionContainer.find('[name="extensionId"]').val();
+            var extensionName = extensionContainer.find('[name="extensionName"]').val();
+            var message = $(this).data("message");
+            var messageInstalling = app.vtranslate('JS_REGENERATING_LICENSE');
+
+            Vtiger_Helper_Js.showConfirmationBox({'message': message}).then(
+                function (e) {
+                    if (element.hasClass('loginRequired')) {
+                        var loginError = app.vtranslate('JS_PLEASE_LOGIN_TO_VTE_STORE_FOR_INSTALLING_EXTENSION');
+                        var loginErrorParam = {text: loginError,'type': 'error'};
+                        Settings_Vtiger_Index_Js.showMessage(loginErrorParam);
+                        return false;
+                    }
+                    var progressIndicatorElement = jQuery.progressIndicator({
+                        'position': 'html',
+                        'blockInfo': {
+                            'enabled': true
+                        },
+                        'message': messageInstalling
+                    });
+                    var params = {
+                        'module': app.getModuleName(),
+                        'parent': app.getParentModuleName(),
+                        'view': 'Settings',
+                        'mode': 'regenerateLicense',
+                        'extensionId': extensionId,
+                        'extensionName': extensionName
+                    };
+
+                    AppConnector.request(params).then(
+                        function (data) {
+                            progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                            var modalData = {
+                                data: data,
+                                css: {'width': '50%', 'height': 'auto'}
+                            };
+                            app.showModalWindow(modalData);
+                        },
+                        function (error) {
+                            progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                        }
+                    );
+                },
+                function (error, err) {
+                }
+            );
+        });
+        // Regenerate License END
+
+        // Regenerate License For All Extensions END
+        jQuery(container).on('click', '.regenerateLicenseAll', function (e) {
+            var element = jQuery(e.currentTarget);
+            var extensionContainer = element.closest('.extension_container');
+            var message = $(this).data("message");
+            Vtiger_Helper_Js.showConfirmationBox({'message': message}).then(
+                function (e) {
+                    if (element.hasClass('loginRequired')) {
+                        var loginError = app.vtranslate('JS_PLEASE_LOGIN_TO_VTE_STORE_FOR_INSTALLING_EXTENSION');
+                        var loginErrorParam = {text: loginError,'type': 'error'};
+                        Settings_Vtiger_Index_Js.showMessage(loginErrorParam);
+                        return false;
+                    }
+                    var progressIndicatorElement = jQuery.progressIndicator({
+                        'position': 'html',
+                        'blockInfo': {
+                            'enabled': true
+                        },
+                        'message': app.vtranslate('JS_REGENERATING_LICENSE')+' ...'
+                    });
+                    var params = {
+                        'module': app.getModuleName(),
+                        'parent': app.getParentModuleName(),
+                        'view': 'Settings',
+                        'mode': 'regenerateLicenseAll'
+                    };
+
+                    AppConnector.request(params).then(
+                        function (data) {
+                            progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                            var modalData = {
+                                data: data,
+                                css: {'width': '50%', 'height': 'auto'}
+                            };
+                            app.showModalWindow(modalData);
+                        },
+                        function (error) {
+                            progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                        }
+                    );
+                },
+                function (error, err) {
+                }
+            );
+        });
+        // Regenerate License For All Extensions END
+
+        // Refresh to update new data from Chargify BEGIN
+        jQuery('body').delegate('#btnRefresh', 'click', function (e) {
+            var message = app.vtranslate('JS_MSG_REFRESH');
+            Vtiger_Helper_Js.showConfirmationBox({'message': message}).then(
+                function (e) {
+                    var url = window.location.href;
+                    if(url.indexOf('getChargifyInfo')!=-1){
+                        var urlReload=url;
+                    }else{
+                        var urlReload=url+'&getChargifyInfo=1';
+                    }
+
+                    var progressIndicatorElement = jQuery.progressIndicator();
+                    window.location.href = urlReload;
+                },
+                function (error, err) {
+                }
+            );
+        });
+        // Refresh to update new data from Chargify END
 
         // Upgrade VTiger Premium module BEGIN
         jQuery(container).on('click', '.UpgradeVTEStore', function (e) {
@@ -471,7 +602,7 @@ jQuery.Class("VTEStore_Settings_Js",{
             var progressIndicatorElement = jQuery.progressIndicator();
 
             var getChargifyInfo= jQuery("#getChargifyInfo").val();
-            if(getChargifyInfo==1){
+            /*if(getChargifyInfo==1){
                 var url = window.location.href;
                 if(url.indexOf('getChargifyInfo')!=-1){
                     var urlReload=url;
@@ -480,7 +611,7 @@ jQuery.Class("VTEStore_Settings_Js",{
                 }
 
                 window.location.href = urlReload;
-            }else{
+            }else{*/
                 var element = jQuery(e.currentTarget);
                 var myAccountModal = jQuery(container).find('.MyAccount').clone(true, true);
                 myAccountModal.removeClass('hide');
@@ -518,7 +649,7 @@ jQuery.Class("VTEStore_Settings_Js",{
                     };
                     form.validationEngine(params);
                 };
-            }
+            //}
 
 
 
@@ -580,6 +711,70 @@ jQuery.Class("VTEStore_Settings_Js",{
         });
         // My Faq END
 
+        // Forgot password BEGIN
+        jQuery("body").find('a[name="forgotPassword"]').unbind("click");
+        jQuery("body").on('click', 'a[name="forgotPassword"]', function (e) {
+            app.hideModalWindow(function(){
+                var progressIndicatorElement = jQuery.progressIndicator();
+                var forgotPasswordModal = jQuery(container).find('.forgotPassword').clone(true, true);
+                forgotPasswordModal.removeClass('hide');
+                // var url = "index.php?module=VTEStore&parent=Settings&view=Settings&mode=ForgotPassword";
+                var actionParams = {
+                    module: 'VTEStore',
+                    parent: 'Settings',
+                    view: 'Settings',
+                    mode: 'ForgotPassword'
+                };
+                AppConnector.request(actionParams).then(
+                    function (data) {
+                        progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                        app.showModalWindow(data, function (modal) {
+                            var form = modal.find('.forgotPasswordForm');
+                            var params = app.validationEngineOptions;
+                            params.onValidationComplete = function(frm, valid){
+                                if(valid){
+                                    form.find('.error_content').html('');
+                                    var formData = $(frm).serializeFormData();
+                                    var progressIndicatorElement = jQuery.progressIndicator();
+                                    
+                                    AppConnector.request(formData).then(
+                                        function (data) {
+                                            progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                                            if(data.result.message != '') {
+                                                var message = data.result.message;
+                                                form.find('.error_content').html(message);
+                                                $("#captcha_container_1 img[alt='Refresh Image']").trigger("click");
+                                                if (data.result.greater_five){
+                                                    form.find("[name='btnForgotPassword']").attr("disabled", "true");
+                                                }
+                                                return;
+                                            }else {
+                                                app.hideModalWindow();
+                                                var params = {'text': app.vtranslate('JS_RESET_PASSWORD')};
+                                                Vtiger_Helper_Js.showMessage(params);
+                                                setTimeout(function () {
+                                                    location.reload();
+                                                }, 5000);
+                                            }
+                                        },
+                                        function (error) {
+                                            progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                                            var message = error.message;
+                                            var params = {title: 'Error', message: message};
+                                            app.helper.showErrorNotification(params)
+                                        }
+                                    );
+                                }
+                                return false;
+                            };
+                            form.validationEngine(params);
+                        }, {'width': '572px'});
+                    }
+                );
+            });
+        });
+        // Forgot password END
+
         // phpiniWarnings BEGIN
         jQuery( "#phpiniWarnings" ).click(function(e) {
             var progressIndicatorElement = jQuery.progressIndicator({
@@ -588,7 +783,7 @@ jQuery.Class("VTEStore_Settings_Js",{
                 },
                 'position': 'html'
             });
-            app.showModalWindow(null, "index.php?module=VTEStore&parent=Settings&view=Settings&mode=ShowWarnings", function (wizardContainer) {}, {'width': '700px'});
+            app.showModalWindow(null, "index.php?module=VTEStore&parent=Settings&view=Settings&mode=ShowWarnings", function (wizardContainer) {}, {'width': '950px'});
         });
         // phpiniWarnings END
 
@@ -601,6 +796,71 @@ jQuery.Class("VTEStore_Settings_Js",{
         jQuery(container).on('click', '.img_tooltip', function (e) {
             thisInstance.ExtensionDetails(e);
         });
+    },
+    
+    changeNewUrl: function(c_id, oldUrl){
+        var params = {
+            'module': "VTEStore",
+            'parent': 'Settings',
+            'view': 'Settings',
+            'mode': 'changeUrl',
+            'c_id': c_id,
+            'oldUrl': oldUrl
+        };
+
+        var progressIndicatorElement = jQuery.progressIndicator();
+        AppConnector.request(params).then(
+            function(data){
+                progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                app.showModalWindow({
+                    data: data,
+                    css: {'width': '700px', 'height': 'auto'},
+                    'cb': function (wizardContainer) {
+                        var form = wizardContainer.find('#frmChangeUrl');
+                        var params = app.getvalidationEngineOptions(true);
+                        params.onValidationComplete = function (form, valid) {
+                            if (valid) {
+                                $(form).find('.error_content').html('');
+                                if ($(form).find("#chkConfirm").prop("checked") != true){
+                                    var message = app.vtranslate('JS_YOU_MUST_AGREE_MOVE_YOUR_ACCOUNT');
+                                    $(form).find('.error_content').html(message);
+                                    return false;
+                                }
+                                var formData = $(form).serializeFormData();
+                                var progressIndicatorElement = jQuery.progressIndicator();
+                                AppConnector.request(formData).then(
+                                    function(data){
+                                        progressIndicatorElement.progressIndicator({'mode': 'hide'});
+                                        if (data.success) {
+                                            if(data.result.message != '') {
+                                                var message = data.result.message;
+                                                $(form).find('.error_content').html(message);
+                                                $("#frmChangeUrl img[alt='Refresh Image']").trigger("click");
+                                                return;
+                                            }else {
+                                                app.hideModalWindow();
+                                                var params = {type: 'success', text: app.vtranslate('JS_MOVE_URL_SUCCESSFULLY') + '\n' + app.vtranslate('JS_PLEASE_WAIT')};
+                                                Settings_Vtiger_Index_Js.showMessage(params);
+                                                //openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
+                                                setTimeout(function () {
+                                                    location.reload();
+                                                }, 5000);
+                                            }
+                                        } else {
+                                            var error = data.error.message;
+                                            var params = {type: 'error', text: error};
+                                            Settings_Vtiger_Index_Js.showMessage(params);
+                                        }
+                                    }
+                                );
+                            }
+                            return false;
+                        };
+                        form.validationEngine(params);
+                    }
+                });
+            }
+        );
     },
 
     // Extension Detail BEGIN

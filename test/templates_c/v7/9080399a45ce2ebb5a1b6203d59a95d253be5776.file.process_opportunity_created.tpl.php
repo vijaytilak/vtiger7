@@ -1,22 +1,20 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-07 23:47:42
+<?php /* Smarty version Smarty-3.1.7, created on 2017-12-12 02:06:01
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Potentials\process_opportunity_created.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:2814159e420479eb2c7-84145073%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:170275a2f398931dd01-70740433%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '9080399a45ce2ebb5a1b6203d59a95d253be5776' => 
     array (
       0 => 'C:\\xampp\\htdocs\\vtiger7\\vtigercrm\\includes\\runtime/../../layouts/v7\\modules\\Potentials\\process_opportunity_created.tpl',
-      1 => 1512690457,
+      1 => 1513043087,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '2814159e420479eb2c7-84145073',
+  'nocache_hash' => '170275a2f398931dd01-70740433',
   'function' => 
   array (
   ),
-  'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_59e42047e2c2d',
   'variables' => 
   array (
     'PICKIST_DEPENDENCY_DATASOURCE' => 0,
@@ -45,10 +43,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'RELATION_LIST_VIEW' => 0,
     'MODULEBASICLINKS' => 0,
     'RELATION_MODEL' => 0,
+    'QUOTES_PREPARED' => 0,
+    'QUOTE' => 0,
   ),
   'has_nocache_code' => false,
+  'version' => 'Smarty-3.1.7',
+  'unifunc' => 'content_5a2f3989a35ba',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_59e42047e2c2d')) {function content_59e42047e2c2d($_smarty_tpl) {?><?php if (!empty($_smarty_tpl->tpl_vars['PICKIST_DEPENDENCY_DATASOURCE']->value)){?><input type="hidden"name="picklistDependency"value='<?php echo Vtiger_Util_Helper::toSafeHTML($_smarty_tpl->tpl_vars['PICKIST_DEPENDENCY_DATASOURCE']->value);?>
+<?php if ($_valid && !is_callable('content_5a2f3989a35ba')) {function content_5a2f3989a35ba($_smarty_tpl) {?><?php if (!empty($_smarty_tpl->tpl_vars['PICKIST_DEPENDENCY_DATASOURCE']->value)){?><input type="hidden"name="picklistDependency"value='<?php echo Vtiger_Util_Helper::toSafeHTML($_smarty_tpl->tpl_vars['PICKIST_DEPENDENCY_DATASOURCE']->value);?>
 '/><?php }?><?php $_smarty_tpl->tpl_vars['FIELD_MODEL'] = new Smarty_variable($_smarty_tpl->tpl_vars['MODULE_MODEL']->value->getField('sales_stage'), null, 0);?><?php $_smarty_tpl->tpl_vars['FIELD_DATA_TYPE'] = new Smarty_variable($_smarty_tpl->tpl_vars['FIELD_MODEL']->value->getFieldDataType(), null, 0);?><?php ob_start();?><?php echo $_smarty_tpl->tpl_vars['FIELD_MODEL']->value->getName();?>
 <?php $_tmp1=ob_get_clean();?><?php $_smarty_tpl->tpl_vars['FIELD_NAME'] = new Smarty_variable($_tmp1, null, 0);?><div class="row"><div class="col-md-12 padding0px"><div class="pull-left"><span class="<?php echo $_smarty_tpl->tpl_vars['FIELD_NAME']->value;?>
  value"title="<?php echo vtranslate($_smarty_tpl->tpl_vars['FIELD_MODEL']->value->get('label'),$_smarty_tpl->tpl_vars['MODULE']->value);?>
@@ -113,4 +115,14 @@ $_smarty_tpl->tpl_vars['PROCESS']->_loop = true;
 "data-subject="<?php echo end(explode(' ',getContactName($_smarty_tpl->tpl_vars['RECORD']->value->get('contact_id'))));?>
  - <?php echo $_smarty_tpl->tpl_vars['PROCESS']->value['subject'];?>
 "data-status-field="quotestage"data-new-status="Created"onclick="Vtiger_Detail_Js.openCreateRelatedRecord(this)"><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;New <?php echo vtlib_toSingular($_smarty_tpl->tpl_vars['PROCESS']->value['relatedModule']);?>
+</a><?php } ?><?php  $_smarty_tpl->tpl_vars['QUOTE'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['QUOTE']->_loop = false;
+ $_from = $_smarty_tpl->tpl_vars['QUOTES_PREPARED']->value; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
+foreach ($_from as $_smarty_tpl->tpl_vars['QUOTE']->key => $_smarty_tpl->tpl_vars['QUOTE']->value){
+$_smarty_tpl->tpl_vars['QUOTE']->_loop = true;
+?><a href="#"class="badge label-success marginLeft10px marginRight10px"data-source-module="<?php echo $_smarty_tpl->tpl_vars['MODULE_NAME']->value;?>
+"data-source-record-id="<?php echo $_smarty_tpl->tpl_vars['RECORD']->value->get('id');?>
+"data-ref-module="Quotes"data-ref-record-id="<?php echo $_smarty_tpl->tpl_vars['QUOTE']->value->get('id');?>
+"onclick="Vtiger_Detail_Js.openDocumentDesigner(this)"title="<?php echo $_smarty_tpl->tpl_vars['QUOTE']->value->get('subject');?>
+ ($<?php echo $_smarty_tpl->tpl_vars['QUOTE']->value->getDisplayValue('hdnGrandTotal');?>
+)"><i title="Edit" class="fa fa-envelope-o"></i>&nbsp;&nbsp;Send Quote <?php echo $_smarty_tpl->tpl_vars['QUOTE']->value->get('quote_no');?>
 </a><?php } ?></div></div><?php }?><?php }} ?>

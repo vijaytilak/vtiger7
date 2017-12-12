@@ -11,7 +11,7 @@
             <input type="hidden" class="step" value="2" />
 
 
-            <div class="padding1per" style="border:1px solid #ccc;">
+            <div class="padding1per" style="border:1px solid #ccc; padding: 1%;">
                 <label>
                     <strong>{vtranslate('LBL_WELCOME',$QUALIFIED_MODULE)} {vtranslate('MODULE_LBL',$QUALIFIED_MODULE)} {vtranslate('LBL_INSTALLATION_WIZARD',$QUALIFIED_MODULE)}</strong>
                 </label>

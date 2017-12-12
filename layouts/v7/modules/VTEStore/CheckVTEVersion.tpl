@@ -25,7 +25,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="workFlowContents" style="padding-left: 3%;padding-right: 3%">
-            <div class="padding1per" style="border:1px solid #ccc;">
+            <div class="padding1per" style="border:1px solid #ccc; padding: 1%;">
                 <label>
                     <strong>{vtranslate('VTEStore Update Required',$QUALIFIED_MODULE)}</strong>
                 </label>
@@ -37,7 +37,7 @@
 
 
                 <div class="control-group">
-                    <div><span><button style="" id="UpgradeVTEStore" class="btn btn-success UpgradeVTEStore" data-svn="lastest">{vtranslate('LBL_UPGRADE_VTE_STORE', 'VTEStore')}</button></span></div>
+                    <div><span><button style="" id="UpgradeVTEStore" class="btn btn-success UpgradeVTEStore" data-message="{vtranslate('LBL_MESSAGE_UPGRAGE_VTE_STORE_TO_LASTEST', 'VTEStore')}" data-svn="lastest">{vtranslate('LBL_UPGRADE_VTE_STORE', 'VTEStore')}</button></span></div>
                 </div>
 
                 <div class="control-group">

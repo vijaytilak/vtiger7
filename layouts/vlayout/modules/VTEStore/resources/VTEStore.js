@@ -115,12 +115,12 @@ jQuery(document).ready(function () {
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid>0 && VTPremiumHeader.customer_status=='no_subscription'){
                             var bgColor='fff';
-                            var msg='Your trial will expire in '+VTPremiumHeader.remain_date+' days. Make sure to try out all the extensions! <br><br>If you have questions on need support email us at <a href="mailto: support@vtexperts.com" target="_blank">support@vtexperts.com</a> or initiate chat on website <a href="https://www.vtexperts.com" target="_blank">vtexperts.com</a>';
+                        var msg='Your trial will expire in '+VTPremiumHeader.remain_date+' days. Make sure to try out all the extensions! If you have questions on need help email us at <br> <a style="padding: 0px; width: 100%; text-align: center; display: inline-block; font-weight: bold; background-color: inherit!important; color: #333!important;" href="mailto: help@vtexperts.com" target="_blank">help@vtexperts.com</a><br> or initiate chat on website <a style="padding: 0px; display: initial;" href="https://www.vtexperts.com" target="_blank">vtexperts.com</a>';
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Go to Extension List</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid>0 && VTPremiumHeader.customer_status=='trial_expired'){
                             var bgColor='ff9966';
-                            var msg='Your trial has expired. Please sign up in order to continue using premium extensions. <br><br>If you would like us to extend your trial,please email us at <a href="mailto: support@vtexperts.com" target="_blank">support@vtexperts.com</a>';
+                            var msg='Your trial has expired. Please sign up in order to continue using premium extensions. If you would like us to extend your trial,please email us at <br><a style="padding: 0px; width: 100%; text-align: center; display: inline-block; font-weight: bold;background-color: inherit!important; color: #333!important;" href="mailto: help@vtexperts.com" target="_blank">help@vtexperts.com</a>';
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Signup</button>';
                             addLiTag=1;
                         }
@@ -144,13 +144,14 @@ jQuery(document).ready(function () {
                         VTPremiumIcon +='</span>';
 
                         if(vtversion=='6.0.0'){
-                            var headerIcons=	document.getElementById('headerLinks');
+                            var headerIcons = document.getElementById('headerLinks');
                         }else{
-                            var headerIcons=	document.getElementById('headerLinksBig');
+                            var headerIcons = document.getElementById('headerLinksBig');
                         }
                         if (headerIcons){
                             headerIcons.innerHTML = VTPremiumIcon + headerIcons.innerHTML ;
                         }
+                        Vtiger_Index_Js.changeSkin();
                     }
                 }
             }
@@ -231,7 +232,7 @@ jQuery(document).ready(function () {
                         if(typeof callBackFunction == 'function'){
                             callBackFunction(data);
                         }
-                    }, {'width':'700px'});
+                    }, {'width':'950px'});
                     var params = {
                         text: 'Fixed!',
                         animation: 'show',
