@@ -95,84 +95,83 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 		if(method_exists($this, $this->salesStageProcessFunctionName)){
 			call_user_func_array(array($this,$this->salesStageProcessFunctionName), array($request));
 		}else{
-			echo "<span style='background: #ffcc88'>The Process View for sales stage : '".$this->recordModel->get('sales_stage')."' is not properly configured. Method '".$this->salesStageProcessFunctionName."' does not exist in modules/Potentials/views/Detail.php. Please contact Fresco Admin :)</span>";
-		}
 
-	}
+			/*********************************CONFIG*******************************/
+			$configModel = new Potentials_Config_Model;
+			$configModel->setProcessStages($this->recordModel->get('sales_stage'));
+			call_user_func_array(array($configModel,$this->salesStageProcessFunctionName), array());
+			/*********************************END CONFIG*****************************/
 
+			$viewer = $this->getViewer($request);
+			$viewer->assign('RECORD', $this->recordModel);
+			$viewer->assign('DETAIL_RECORD_STRUCTURE', $this->detailRecordStructureModel->getStructure());
+			$viewer->assign('SUMMARY_RECORD_STRUCTURE',  $this->summaryRecordStrucureModel->getStructure());
+			$viewer->assign('BLOCK_LIST', $this->moduleModel->getBlocks());
+			$viewer->assign('USER_MODEL', $this->currentUserModel);
+			$viewer->assign('MODULE_NAME', $this->moduleName);
+			$viewer->assign('IS_AJAX_ENABLED', $this->isAjaxEnabled($this->recordModel));
+			$viewer->assign('MODULE_MODEL', $this->moduleModel);
+			$viewer->assign('PICKIST_DEPENDENCY_DATASOURCE', Vtiger_Functions::jsonEncode($this->picklistDependencyDatasource));
 
-	/**
-	 * Vijay
-	 * @param Vtiger_Request $request
-	 *
-	 * @throws Exception
-	 */
-	function process_opportunity_created(Vtiger_Request $request) {
+			$viewer->assign('PROCESS_STAGE_FIELDS', $configModel->getAllProcessStageFields());
+			$viewer->assign('PROCESS_NAME', $configModel->processName);
+			$viewer->assign('PROCESS_LIST', $configModel->processList);
+			$viewer->assign('PROCESSES', $configModel->process);
+			$viewer->assign('CONFIG_MODEL', $configModel);
+			$viewer->assign('CURRENT_PROCESS', $configModel->currentProcess);
+			$viewer->assign('PREVIOUS_PROCESS_STAGE', $configModel->previousProcessStage);
+			$viewer->assign('CURRENT_PROCESS_STAGE', $configModel->currentProcessStage);
+			$viewer->assign('NEXT_PROCESS_STAGE', $configModel->nextProcessStage);
 
-		/*********************************CONFIG*******************************/
-		$configModel = new Potentials_Config_Model;
-		$configModel->setProcessStages($this->recordModel->get('sales_stage'));
-		call_user_func_array(array($configModel,$this->salesStageProcessFunctionName), array());
-		/*********************************END CONFIG*****************************/
-
-		$viewer = $this->getViewer($request);
-		$viewer->assign('RECORD', $this->recordModel);
-		$viewer->assign('DETAIL_RECORD_STRUCTURE', $this->detailRecordStructureModel->getStructure());
-		$viewer->assign('SUMMARY_RECORD_STRUCTURE',  $this->summaryRecordStrucureModel->getStructure());
-		$viewer->assign('BLOCK_LIST', $this->moduleModel->getBlocks());
-		$viewer->assign('USER_MODEL', $this->currentUserModel);
-		$viewer->assign('MODULE_NAME', $this->moduleName);
-		$viewer->assign('IS_AJAX_ENABLED', $this->isAjaxEnabled($this->recordModel));
-		$viewer->assign('MODULE_MODEL', $this->moduleModel);
-		$viewer->assign('PICKIST_DEPENDENCY_DATASOURCE', Vtiger_Functions::jsonEncode($this->picklistDependencyDatasource));
-
-		$viewer->assign('PROCESS_STAGE_FIELDS', $configModel->getAllProcessStageFields());
-		$viewer->assign('PROCESS_NAME', $configModel->processName);
-		$viewer->assign('PROCESS_LIST', $configModel->processList);
-		$viewer->assign('CURRENT_PROCESS', $configModel->currentProcess);
-		$viewer->assign('PREVIOUS_PROCESS_STAGE', $configModel->previousProcessStage);
-		$viewer->assign('CURRENT_PROCESS_STAGE', $configModel->currentProcessStage);
-		$viewer->assign('NEXT_PROCESS_STAGE', $configModel->nextProcessStage);
-
-		//Missing Processes
-		$missingProcesses = Potentials_BasicAjax_Action::checkProcessStageCompletion($request, TRUE);
-		$missingMandatoryProcesses = array_merge($missingProcesses['missingMandatoryActivities'],$missingProcesses['missingMandatoryRelatedRecords']);
-		$minRefId=FALSE;
-		$highlightProcess=array();
-		foreach ($missingMandatoryProcesses as $key => $process) {
-			if((!$minRefId)||($minRefId && ($process['refId']<$minRefId))) {
-				$minRefId = $process['refId'];
-				$highlightProcess = $process;
+			//Missing Processes
+			$missingProcesses = Potentials_BasicAjax_Action::checkProcessStageCompletion($request, TRUE);
+			$missingMandatoryProcesses = array_merge($missingProcesses['missingActivities'],$missingProcesses['missingRelatedRecords']);
+			$minRefId=FALSE;
+			$highlightProcess=array();
+			foreach ($missingMandatoryProcesses as $key => $process) {
+				if((!$minRefId)||($minRefId && ($process['refId']<$minRefId))) {
+					$minRefId = $process['refId'];
+					$highlightProcess = $process;
+				}
 			}
-		}
-		if (false !== $key = array_search($highlightProcess, $missingProcesses['missingMandatoryActivities'])) {
-			$missingProcesses['missingMandatoryActivities'][$key]['highlight']=TRUE;
-		}
-		if (false !== $key = array_search($highlightProcess, $missingProcesses['missingMandatoryRelatedRecords'])) {
-			$missingProcesses['missingMandatoryRelatedRecords'][$key]['highlight']=TRUE;
-		}
-		$viewer->assign('MISSING_PROCESSES', $missingProcesses);
+			if (false !== $key = array_search($highlightProcess, $missingProcesses['missingActivities'])) {
+				$missingProcesses['missingActivities'][$key]['highlight']=TRUE;
+			}
+			if (false !== $key = array_search($highlightProcess, $missingProcesses['missingRelatedRecords'])) {
+				$missingProcesses['missingRelatedRecords'][$key]['highlight']=TRUE;
+			}
+			$viewer->assign('MISSING_PROCESSES', $missingProcesses);
 
-		//Related Quotes waiting to be Sent
-		$getParams = array(
-			'module' => $this->moduleName,
-			'record' => $this->recordId,
-			'relatedModule' => 'Quotes',
-			'page' => '1',
-			'limit' => '40',
-			'status' => ['Prepared'],
-			'statusField' => 'quotestage'
-		);
-		$getRequest = new Vtiger_Request($getParams);
-		$models = $this->getRelatedRecords($getRequest);
-		$quotesPrepared = $models['records'];
-		$recordCount = count($quotesPrepared);
-		$viewer->assign('QUOTES_PREPARED', $quotesPrepared);
+			//Related Quotes waiting to be Sent
+			$getParams = array(
+				'module' => $this->moduleName,
+				'record' => $this->recordId,
+				'relatedModule' => 'Quotes',
+				'page' => '1',
+				'limit' => '40',
+				'status' => ['Prepared'],
+				'statusField' => 'quotestage'
+			);
+			$getRequest = new Vtiger_Request($getParams);
+			$models = $this->getRelatedRecords($getRequest);
+			$quotesPrepared = $models['records'];
+			$recordCount = count($quotesPrepared);
+			$viewer->assign('QUOTES_PREPARED', $quotesPrepared);
 
-		$templateName = $this->salesStageProcessFunctionName.'.tpl';
-		echo $viewer->view($templateName, $this->moduleName, true);
-		$this->displayNextActivityDetail($request,$this->recordModel->get('id'),$this->moduleName);
+			$templateName = $this->salesStageProcessFunctionName.'.tpl';
+			if( $viewer->template_exists($templateName) ){
+				echo $viewer->view($templateName, $this->moduleName, true);
+				$this->displayNextActivityDetail($request,$this->recordModel->get('id'),$this->moduleName);
+			} else {
+				echo $viewer->view('process_view.tpl', $this->moduleName, true);
+				$this->displayNextActivityDetail($request,$this->recordModel->get('id'),$this->moduleName);
+			}
+
+			/*echo "<span style='background: #ffcc88'>The Process View for sales stage : '".$this->recordModel->get('sales_stage')."' is not properly configured. Method '".$this->salesStageProcessFunctionName."' does not exist in modules/Potentials/views/Detail.php. Please contact Fresco Admin :)</span>";*/
+		}
+
 	}
+
 
 	/**
 	 * Vijay

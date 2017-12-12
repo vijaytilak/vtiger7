@@ -256,6 +256,8 @@ Vtiger.Class("Vtiger_Detail_Js",{
         customParams['activitytype'] = formParams.activityType;
         customParams['subject'] = formParams.subject;
 
+        formParams.status = 'Planned';
+
         //On Show
         app.event.on("post.QuickCreateForm.show",function(event,form){
             jQuery('<input type="hidden" name="sourceModule" value="'+formParams.sourceModule+'" >').appendTo(form);
@@ -264,6 +266,12 @@ Vtiger.Class("Vtiger_Detail_Js",{
             jQuery('<input type="hidden" name="parent_id" value="'+formParams.sourceRecordId+'" >').appendTo(form);
             jQuery('<input type="hidden" name="contact_id" value="'+formParams.contactId+'" >').appendTo(form);
             //jQuery('#Events_editView_fieldName_subject').val(formParams.subject);
+            if(formParams.activityType==='Todo') {
+                jQuery("[data-fieldname='taskstatus']").select2("val", formParams.status);
+            } else {
+                jQuery("[data-fieldname='eventstatus']").select2("val", formParams.status);
+            }
+
         });
 
         //On Save

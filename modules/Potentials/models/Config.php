@@ -125,13 +125,13 @@ class Potentials_Config_Model {
 			'processType' => 'relatedActivity',
 			'refId' => 5,
 			'relatedModule' => 'Events',
-			'count' => 2,
+			'count' => 1,
 			'dependancyOn' => NULL,
 			'mandatory' => true,
 			'activityType' => 'Call',
 			'subject' => 'Arrange First Site Visit',
 			'statusFieldName' => 'eventstatus',
-			'status' => ['Held'],
+			'status' => ['Planned','Held'],
 		);
 		$this->process[] = array(
 			'processType' => 'relatedActivity',
@@ -185,7 +185,7 @@ class Potentials_Config_Model {
 			'activityType' => 'Meeting',
 			'subject' => 'First Site Visit',
 			'statusFieldName' => 'eventstatus',
-			'status' => ['Held'],
+			'status' => ['Planned','Held'],
 		);
 	}
 
@@ -204,7 +204,7 @@ class Potentials_Config_Model {
 			'activityType' => 'Todo',
 			'subject' => 'Get Tech Support',
 			'statusFieldName' => 'status',
-			'status' => ['Completed'],
+			'status' => ['Planned','Completed'],
 		);
 		$this->process[] = array(
 			'processType' => 'relatedActivity',
@@ -216,7 +216,7 @@ class Potentials_Config_Model {
 			'activityType' => 'Todo',
 			'subject' => 'Prepare Quote',
 			'statusFieldName' => 'status',
-			'status' => ['Completed'],
+			'status' => ['Planned','Completed'],
 		);
 	}
 
@@ -267,8 +267,16 @@ class Potentials_Config_Model {
 		return array_filter($this->process,array($this, 'filterMandatoryActivitiesFromConfig'));
 	}
 
+	function getAllProcessStageActivities() {
+		return array_filter($this->process,array($this, 'filterAllActivitiesFromConfig'));
+	}
+
 	function getMandatoryProcessStageRelatedRecords() {
 		//return array_map(array($this, 'mapSubject'), array_filter($this->process,array($this, 'filterMandatoryRelatedRecordsFromConfig')));
 		return array_filter($this->process,array($this, 'filterMandatoryRelatedRecordsFromConfig'));
+	}
+
+	function getAllProcessStageRelatedRecords() {
+		return array_filter($this->process,array($this, 'filterAllRelatedRecordsFromConfig'));
 	}
 }

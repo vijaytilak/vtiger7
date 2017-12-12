@@ -103,10 +103,10 @@
 
     {*Display Action Buttons*}
     {assign var=CALENDAR_MODEL value = Vtiger_Module_Model::getInstance('Calendar')}
-    {if $CALENDAR_MODEL->isPermitted('CreateView') && ($MISSING_PROCESSES['missingMandatoryActivities']||$MISSING_PROCESSES['missingMandatoryRelatedRecords'])}
+    {if $CALENDAR_MODEL->isPermitted('CreateView') && ($MISSING_PROCESSES['missingActivities']||$MISSING_PROCESSES['missingRelatedRecords'])}
         <div class="row">
             <div class="col-md-12 textAlignCenter" style="background: inherit; border: 0px">
-                {foreach item=PROCESS from=$MISSING_PROCESSES['missingMandatoryActivities']}
+                {foreach item=PROCESS from=$MISSING_PROCESSES['missingActivities']}
                     {if $PROCESS['highlight'] eq TRUE}
                         {assign var=HIGHLIGHT_CLASS value = 'label-warning'}
                     {else}
@@ -124,7 +124,7 @@
                     ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;{$PROCESS['activityType']} : {$PROCESS['subject']}</a>
                 {/foreach}
 
-                {foreach item=PROCESS from=$MISSING_PROCESSES['missingMandatoryRelatedRecords']}
+                {foreach item=PROCESS from=$MISSING_PROCESSES['missingRelatedRecords']}
                     {if $PROCESS['highlight'] eq TRUE}
                         {assign var=HIGHLIGHT_CLASS value = 'label-warning'}
                     {else}
