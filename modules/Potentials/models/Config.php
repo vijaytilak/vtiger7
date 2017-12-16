@@ -44,17 +44,16 @@ class Potentials_Config_Model {
 			'2' => 'FSV Held',
 			'3' => 'Quote Prepared',
 			'4' => 'Quote Delivered',
-			'5' => 'Quote Follow Up',
-			'6' => 'Quote Accepted',
-			'7' => 'SO Approved',
-			'8' => 'FSM Done',
-			'9' => 'Project Initiated',
-			'10' => 'Project In Progress',
-			'11' => 'Project Completed',
-			'12' => 'Job Invoiced',
-			'13' => 'Final Payment Received',
-			'14' => 'Feedback Received',
-			'15' => 'Closed Won',
+			'5' => 'Quote Accepted',
+			'6' => 'SO Approved',
+			'7' => 'FSM Done',
+			'8' => 'Project Initiated',
+			'9' => 'Project In Progress',
+			'10' => 'Project Completed',
+			'11' => 'Job Invoiced',
+			'12' => 'Final Payment Received',
+			'13' => 'Feedback Received',
+			'14' => 'Closed Won',
 		);
 		$processExitStageList = array(
 			'0' => 'Closed Lost',
@@ -127,11 +126,15 @@ class Potentials_Config_Model {
 			'relatedModule' => 'Events',
 			'count' => 1,
 			'dependancyOn' => NULL,
-			'mandatory' => true,
+			'mandatory' => false,
 			'activityType' => 'Call',
 			'subject' => 'Arrange First Site Visit',
 			'statusFieldName' => 'eventstatus',
-			'status' => ['Planned','Held'],
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
 		);
 		$this->process[] = array(
 			'processType' => 'relatedActivity',
@@ -143,7 +146,11 @@ class Potentials_Config_Model {
 			'activityType' => 'Meeting',
 			'subject' => 'First Site Visit',
 			'statusFieldName' => 'eventstatus',
-			'status' => ['Held'],
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
 		);
 		$this->process[] = array(
 			'processType' => 'relatedRecord',
@@ -151,10 +158,14 @@ class Potentials_Config_Model {
 			'relatedModule' => 'Quotes',
 			'count' => 2,
 			'dependancyOn' => 6,
-			'dependancyCondition' => 'function::::checkToShowCreateQuoteBtn, array()',
+			'dependancyCondition' => '',
 			'mandatory' => true,
 			'statusFieldName' => 'quotestage',
-			'status' => ['Delivered'],
+			'status' => array(
+				'onCreate' => ['Created'],
+				'inProgress' => ['Prepared'],
+				'onCompletion' => ['Delivered'],
+			),
 		);
 		$this->process[] = array(
 			'processType' => 'relatedRecord',
@@ -162,10 +173,14 @@ class Potentials_Config_Model {
 			'relatedModule' => 'SalesOrder',
 			'count' => 1,
 			'dependancyOn' => 7,
-			'dependancyCondition' => 'function::::isQuoteStageAccepted, array("count" => 1)',
+			'dependancyCondition' => '',
 			'mandatory' => true,
 			'statusFieldName' => 'sostatus',
-			'status' => ['Approved'],
+			'status' => array(
+				'onCreate' => ['Created'],
+				'inProgress' => ['Created'],
+				'onCompletion' => ['Approved'],
+			),
 		);
 
 	}
@@ -177,7 +192,7 @@ class Potentials_Config_Model {
 
 		$this->process[] = array(
 			'processType' => 'relatedActivity',
-			'refId' => 6,
+			'refId' => 1,
 			'relatedModule' => 'Events',
 			'count' => 1,
 			'dependancyOn' => 5,
@@ -185,7 +200,11 @@ class Potentials_Config_Model {
 			'activityType' => 'Meeting',
 			'subject' => 'First Site Visit',
 			'statusFieldName' => 'eventstatus',
-			'status' => ['Planned','Held'],
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
 		);
 	}
 
@@ -193,10 +212,9 @@ class Potentials_Config_Model {
 	 * Config : FSV Held
 	 */
 	function process_fsv_held() {
-
 		$this->process[] = array(
 			'processType' => 'relatedActivity',
-			'refId' => 1,
+			'refId' => 3,
 			'relatedModule' => 'Calendar',
 			'count' => 1,
 			'dependancyOn' => NULL,
@@ -204,22 +222,269 @@ class Potentials_Config_Model {
 			'activityType' => 'Todo',
 			'subject' => 'Get Tech Support',
 			'statusFieldName' => 'status',
-			'status' => ['Planned','Completed'],
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Completed'],
+			),
 		);
 		$this->process[] = array(
 			'processType' => 'relatedActivity',
-			'refId' => 2,
+			'refId' => 1,
 			'relatedModule' => 'Calendar',
 			'count' => 1,
 			'dependancyOn' => NULL,
 			'mandatory' => true,
 			'activityType' => 'Todo',
-			'subject' => 'Prepare Quote',
+			'subject' => 'Prepare a Quote',
 			'statusFieldName' => 'status',
-			'status' => ['Planned','Completed'],
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Completed'],
+			),
 		);
+		$this->process[] = array(
+			'processType' => 'relatedRecord',
+			'refId' => 2,
+			'relatedModule' => 'Quotes',
+			'count' => 2,
+			'dependancyOn' => 6,
+			'dependancyCondition' => '',
+			'mandatory' => true,
+			'statusFieldName' => 'quotestage',
+			'status' => array(
+				'onCreate' => ['Created'],
+				'inProgress' => [],
+				'onCompletion' => ['Prepared','Delivered','Accepted'],
+			),
+		);
+
 	}
 
+	/**
+	 * Config : Quote Prepared
+	 */
+	function process_quote_prepared() {
+		$this->process[] = array(
+			'processType' => 'field',
+			'refId' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => true,
+			'fieldName' => 'cf_891'
+		);
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 2,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => 1,
+			'dependancyCondition' => 'function::::isQuoteDeliveryMethodPresentation, array()',
+			'mandatory' => false,
+			'activityType' => 'Call',
+			'subject' => 'Arrange Quote Presentation',
+			'statusFieldName' => 'eventstatus',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
+		);
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 3,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => 1,
+			'mandatory' => false,
+			'activityType' => 'Meeting',
+			'subject' => 'Quote Presentation',
+			'statusFieldName' => 'eventstatus',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
+		);
+		$this->process[] = array(
+			'processType' => 'relatedRecord',
+			'refId' => 4,
+			'relatedModule' => 'Quotes',
+			'count' => 1,
+			'dependancyOn' => 6,
+			'dependancyCondition' => '',
+			'mandatory' => true,
+			'statusFieldName' => 'quotestage',
+			'status' => array(
+				'onCreate' => ['Created'],
+				'inProgress' => [],
+				'onCompletion' => ['Delivered'],
+			),
+		);
+
+	}
+
+	/**
+	 * Config : Quote Delivered
+	 */
+	function process_quote_delivered() {
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 1,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'dependancyCondition' => '',
+			'mandatory' => false,
+			'activityType' => 'Call',
+			'subject' => 'Quote Follow Up',
+			'statusFieldName' => 'eventstatus',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
+		);
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 2,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => 1,
+			'mandatory' => false,
+			'activityType' => 'Meeting',
+			'subject' => 'Quote Follow Up',
+			'statusFieldName' => 'eventstatus',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
+		);
+		$this->process[] = array(
+			'processType' => 'relatedRecord',
+			'refId' => 3,
+			'relatedModule' => 'Quotes',
+			'count' => 1,
+			'dependancyOn' => 6,
+			'dependancyCondition' => '',
+			'mandatory' => true,
+			'statusFieldName' => 'quotestage',
+			'status' => array(
+				'onCreate' => ['Created'],
+				'inProgress' => [],
+				'onCompletion' => ['Accepted'],
+			),
+		);
+
+	}
+
+	/**
+	 * Config : Quote Accepted
+	 */
+	function process_quote_accepted() {
+		$this->process[] = array(
+			'processType' => 'field',
+			'refId' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => true,
+			'fieldName' => 'cf_893'
+		);
+		$this->process[] = array(
+			'processType' => 'relatedRecord',
+			'refId' => 2,
+			'relatedModule' => 'SalesOrder',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'dependancyCondition' => '',
+			'mandatory' => true,
+			'statusFieldName' => 'sostatus',
+			'status' => array(
+				'onCreate' => ['Created'],
+				'inProgress' => ['Created'],
+				'onCompletion' => ['Approved'],
+			),
+		);
+
+	}
+
+	/**
+	 * Config : SO Approved
+	 */
+	function process_so_approved() {
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 3,
+			'relatedModule' => 'Calendar',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => false,
+			'activityType' => 'Todo',
+			'subject' => 'Get Tech Support',
+			'statusFieldName' => 'status',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Completed'],
+			),
+		);
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 1,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => false,
+			'activityType' => 'Call',
+			'subject' => 'Arrange Final Site Measurement',
+			'statusFieldName' => 'eventstatus',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
+		);
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 2,
+			'relatedModule' => 'Events',
+			'count' => 1,
+			'dependancyOn' => 5,
+			'mandatory' => true,
+			'activityType' => 'Meeting',
+			'subject' => 'Final Site Measurement',
+			'statusFieldName' => 'eventstatus',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Held'],
+			),
+		);
+
+	}
+
+	/**
+	 * Config : SO Approved
+	 */
+	function process_fsm_done() {
+		$this->process[] = array(
+			'processType' => 'relatedActivity',
+			'refId' => 3,
+			'relatedModule' => 'Calendar',
+			'count' => 1,
+			'dependancyOn' => NULL,
+			'mandatory' => false,
+			'activityType' => 'Todo',
+			'subject' => 'Write Up Job',
+			'statusFieldName' => 'status',
+			'status' => array(
+				'onCreate' => ['Planned'],
+				'inProgress' => ['Planned'],
+				'onCompletion' => ['Completed'],
+			),
+		);
+
+	}
 
 	function filterAllFieldsFromConfig($process) {
 		return ($process['processType']=='field');

@@ -158,6 +158,22 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 			$recordCount = count($quotesPrepared);
 			$viewer->assign('QUOTES_PREPARED', $quotesPrepared);
 
+			//Related Quotes Accepted
+			$getParams = array(
+				'module' => $this->moduleName,
+				'record' => $this->recordId,
+				'relatedModule' => 'Quotes',
+				'page' => '1',
+				'limit' => '40',
+				'status' => ['Accepted'],
+				'statusField' => 'quotestage'
+			);
+			$getRequest = new Vtiger_Request($getParams);
+			$models = $this->getRelatedRecords($getRequest);
+			$quotesAccepted = $models['records'];
+			$recordCount = count($quotesAccepted);
+			$viewer->assign('QUOTES_ACCEPTED', $quotesAccepted);
+
 			$templateName = $this->salesStageProcessFunctionName.'.tpl';
 			if( $viewer->template_exists($templateName) ){
 				echo $viewer->view($templateName, $this->moduleName, true);
@@ -180,94 +196,62 @@ class Potentials_Detail_View extends Vtiger_Detail_View {
 	 * @param string $sourceModule
 	 */
 	function displayNextActivityDetail(Vtiger_Request $request, $sourceRecord='', $sourceModule='') {
-		//Show Next Activity Detail
-		$activityRecordModel = $this->getRecordForNextActivity($request);
-		$activityRecordStructure = Vtiger_RecordStructure_Model::getInstanceFromRecordModel($activityRecordModel, Vtiger_RecordStructure_Model::RECORD_STRUCTURE_MODE_DETAIL);
-		$activityStructuredValues = $activityRecordStructure->getStructure();
+		$statusList = array('Planned');
+		$plannedActivityRecords = $this->getActivityRecords($request, $statusList);
+		$plannedActivityRecordCount = count($plannedActivityRecords);
 
-		//Handle Events & Tasks
-		if($activityRecordModel->get('activitytype') == 'Task') {
-			$activityModuleName = $activityRecordModel->getModuleName();
-			$activityModuleModel = $activityRecordModel->getModule();
-		} else {
-			$activityModuleName = 'Events';
-			$activityModuleModel = Vtiger_Module_Model::getInstance($activityModuleName);
-		}
+		$sourceModule = $request->getModule();
+		$sourceRecord = $request->get('record');
+		foreach ($plannedActivityRecords as $activityRecordModel) {
 
-		//Get OverDue Status
-		$date = new DateTime(Vtiger_Util_Helper::convertDateTimeIntoUsersDisplayFormat($activityRecordModel->get('date_start').' '.$activityRecordModel->get('time_start')));
-		$now = new DateTime(Vtiger_Util_Helper::convertDateTimeIntoUsersDisplayFormat());
+			$activityRecordStructure = Vtiger_RecordStructure_Model::getInstanceFromRecordModel($activityRecordModel, Vtiger_RecordStructure_Model::RECORD_STRUCTURE_MODE_DETAIL);
+			$activityStructuredValues = $activityRecordStructure->getStructure();
 
-		if($date < $now) {
-			$activityOverDueStatus = 'Overdue';
-		} else if($date == $now) {
-			$activityOverDueStatus = 'Due Today';
-		} else {
-			$activityOverDueStatus = 'Upcoming';
-		}
-		$activityDateDiff = Vtiger_Util_Helper::formatDateDiffInStrings($activityRecordModel->get('date_start').' '.$activityRecordModel->get('time_start'));
-
-		//Related Contact
-		$relatedContactId = $this->recordModel->get('contact_id');
-
-		$viewer = $this->getViewer($request);
-		$viewer->assign('RECORD', $activityRecordModel);
-		$viewer->assign('RECORD_STRUCTURE', $activityStructuredValues);
-		$viewer->assign('BLOCK_LIST', $activityModuleModel->getBlocks());
-		$viewer->assign('USER_MODEL', Users_Record_Model::getCurrentUserModel());
-		$viewer->assign('MODULE_NAME', $activityModuleName);
-		$viewer->assign('IS_AJAX_ENABLED', $this->isAjaxEnabled($activityRecordModel));
-		$viewer->assign('MODULE', $activityModuleName);
-		$viewer->assign('MODULE_MODEL', $activityModuleModel);
-		$viewer->assign('ACTIVITY_STATUS', $activityRecordModel->get('status'));
-		$viewer->assign('SOURCE_MODULE', $sourceModule);
-		$viewer->assign('SOURCE_RECORD', $sourceRecord);
-		$viewer->assign('ACTIVITY_OVERDUE_STATUS', $activityOverDueStatus);
-		$viewer->assign('ACTIVITY_DATE_DIFF', $activityDateDiff);
-		$viewer->assign('CONTACT_ID', $relatedContactId);
-		echo $viewer->view('ShowActivityDetail.tpl', $this->moduleName, true);
-
-	}
-
-
-	/**
-	 * Vijay
-	 * @param Vtiger_Request $request
-	 *
-	 * @return mixed
-	 */
-	function getRecordForNextActivity(Vtiger_Request $request) {
-		$moduleName = 'Calendar';
-		$moduleModel = Vtiger_Module_Model::getInstance($moduleName);
-
-		$currentUserPriviligesModel = Users_Privileges_Model::getCurrentUserPrivilegesModel();
-		if ($currentUserPriviligesModel->hasModulePermission($moduleModel->getId())) {
-			$moduleName = $request->getModule();
-			$recordId = $request->get('record');
-
-			$pageNumber = $request->get('page');
-			if (empty($pageNumber)) {
-				$pageNumber = 1;
-			}
-			$pagingModel = new Vtiger_Paging_Model();
-			$pagingModel->set('page', $pageNumber);
-			$pagingModel->set('limit', 10);
-
-			if (!$this->record) {
-				$this->record = Vtiger_DetailView_Model::getInstance($moduleName, $recordId);
-			}
-			$recordModel = $this->record->getRecord();
-			$moduleModel = $recordModel->getModule();
-
-			$relatedActivities = $moduleModel->getCalendarActivities('upcoming', $pagingModel, 'all', $recordId);
-			$NextActivity = array();
-			foreach($relatedActivities as $activityRecord) {
-				$NextActivity=$activityRecord;
-				break;
+			//Handle Events & Tasks
+			if($activityRecordModel->get('activitytype') == 'Task') {
+				$activityModuleName = $activityRecordModel->getModuleName();
+				$activityModuleModel = $activityRecordModel->getModule();
+			} else {
+				$activityModuleName = 'Events';
+				$activityModuleModel = Vtiger_Module_Model::getInstance($activityModuleName);
 			}
 
-			return $NextActivity;
+			//Get OverDue Status
+			$date = new DateTime(Vtiger_Util_Helper::convertDateTimeIntoUsersDisplayFormat($activityRecordModel->get('date_start').' '.$activityRecordModel->get('time_start')));
+			$now = new DateTime(Vtiger_Util_Helper::convertDateTimeIntoUsersDisplayFormat());
+
+			if($date < $now) {
+				$activityOverDueStatus = 'Overdue';
+			} else if($date == $now) {
+				$activityOverDueStatus = 'Due Today';
+			} else {
+				$activityOverDueStatus = 'Upcoming';
+			}
+			$activityDateDiff = Vtiger_Util_Helper::formatDateDiffInStrings($activityRecordModel->get('date_start').' '.$activityRecordModel->get('time_start'));
+
+			//Related Contact
+			$relatedContactId = $this->recordModel->get('contact_id');
+
+			$viewer = $this->getViewer($request);
+			$viewer->assign('RECORD', $activityRecordModel);
+			$viewer->assign('RECORD_STRUCTURE', $activityStructuredValues);
+			$viewer->assign('BLOCK_LIST', $activityModuleModel->getBlocks());
+			$viewer->assign('USER_MODEL', Users_Record_Model::getCurrentUserModel());
+			$viewer->assign('MODULE_NAME', $activityModuleName);
+			$viewer->assign('IS_AJAX_ENABLED', $this->isAjaxEnabled($activityRecordModel));
+			$viewer->assign('MODULE', $activityModuleName);
+			$viewer->assign('MODULE_MODEL', $activityModuleModel);
+			$viewer->assign('ACTIVITY_STATUS', $activityRecordModel->get('status'));
+			$viewer->assign('SOURCE_MODULE', $sourceModule);
+			$viewer->assign('SOURCE_RECORD', $sourceRecord);
+			$viewer->assign('ACTIVITY_OVERDUE_STATUS', $activityOverDueStatus);
+			$viewer->assign('ACTIVITY_DATE_DIFF', $activityDateDiff);
+			$viewer->assign('CONTACT_ID', $relatedContactId);
+			$viewer->assign('COLS', round(12/$plannedActivityRecordCount));
+
+			echo $viewer->view('ShowActivityDetail.tpl', $this->moduleName, true);
 		}
+
 	}
 
 

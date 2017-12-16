@@ -87,19 +87,20 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 			}
 		}
 
-		//Check if Mandatory Activities are held
+		//Missing Mandatory Activities
 		$missingMandatoryActivities = array();
 		foreach ($configModel->getMandatoryProcessStageActivities() as $key => $process) {
-			$relatedActivities = Potentials_Detail_View::getActivityRecords($request, $process['status'], $process['subject'], $process['activityType']);
+			$relatedActivities = Potentials_Detail_View::getActivityRecords($request, $process['status']['onCompletion'], $process['subject'], $process['activityType']);
 			$recordCount = count($relatedActivities);
 			if($recordCount!=$process['count']) {
 				$process['missingCount'] = $process['count']-$recordCount;
 				$missingMandatoryActivities[] = $process;
 			}
 		}
+		//Missing Activities
 		$missingActivities = array();
 		foreach ($configModel->getAllProcessStageActivities() as $key => $process) {
-			$relatedActivities = Potentials_Detail_View::getActivityRecords($request, $process['status'], $process['subject'], $process['activityType']);
+			$relatedActivities = Potentials_Detail_View::getActivityRecords($request, array_merge($process['status']['inProgress'],$process['status']['onCompletion']), $process['subject'], $process['activityType']);
 			$recordCount = count($relatedActivities);
 			if($recordCount!=$process['count']) {
 				$process['missingCount'] = $process['count']-$recordCount;
@@ -107,7 +108,7 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 			}
 		}
 
-		//Check if Mandatory Related Records are created
+		//Missing Mandatory Related Records
 		$missingMandatoryRelatedRecords = array();
 		foreach ($configModel->getMandatoryProcessStageRelatedRecords() as $key => $process) {
 			$getParams = array(
@@ -116,7 +117,7 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 				'relatedModule' => $process['relatedModule'],
 				'page' => '1',
 				'limit' => '40',
-				'status' => $process['status'],
+				'status' =>  $process['status']['onCompletion'],
 				'statusField' => $process['statusFieldName']
 			);
 			$getRequest = new Vtiger_Request($getParams);
@@ -128,6 +129,7 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 				$missingMandatoryRelatedRecords[] = $process;
 			}
 		}
+		//Missing Related Records
 		$missingRelatedRecords = array();
 		foreach ($configModel->getAllProcessStageRelatedRecords() as $key => $process) {
 			$getParams = array(
@@ -136,7 +138,7 @@ class Potentials_BasicAjax_Action extends Vtiger_Action_Controller {
 				'relatedModule' => $process['relatedModule'],
 				'page' => '1',
 				'limit' => '40',
-				'status' => $process['status'],
+				'status' => array_merge($process['status']['inProgress'],$process['status']['onCompletion']),
 				'statusField' => $process['statusFieldName']
 			);
 			$getRequest = new Vtiger_Request($getParams);

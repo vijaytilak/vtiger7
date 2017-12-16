@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-12 02:05:45
+<?php /* Smarty version Smarty-3.1.7, created on 2017-12-15 01:27:44
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Vtiger\IndexPostProcess.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:99775a2f39799034c1-16673890%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:110525a332510b0a8f9-88351794%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,15 +11,15 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '99775a2f39799034c1-16673890',
+  'nocache_hash' => '110525a332510b0a8f9-88351794',
   'function' => 
   array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_5a2f397990fbb',
+  'unifunc' => 'content_5a332510b2956',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5a2f397990fbb')) {function content_5a2f397990fbb($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a332510b2956')) {function content_5a332510b2956($_smarty_tpl) {?>
 
 
 

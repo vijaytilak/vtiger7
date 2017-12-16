@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-12 02:05:39
+<?php /* Smarty version Smarty-3.1.7, created on 2017-12-15 01:27:41
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Vtiger\ModuleRelatedTabs.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:83855a2f3973be6eb8-15587178%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:157645a33250db47e62-83884585%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '83855a2f3973be6eb8-15587178',
+  'nocache_hash' => '157645a33250db47e62-83884585',
   'function' => 
   array (
   ),
@@ -41,9 +41,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_5a2f397413d7b',
+  'unifunc' => 'content_5a33250ddfc45',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5a2f397413d7b')) {function content_5a2f397413d7b($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a33250ddfc45')) {function content_5a33250ddfc45($_smarty_tpl) {?>
 
 <div class='related-tabs row'><ul class="nav nav-tabs"><?php  $_smarty_tpl->tpl_vars['RELATED_LINK'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['RELATED_LINK']->_loop = false;
  $_from = $_smarty_tpl->tpl_vars['DETAILVIEW_LINKS']->value['DETAILVIEWTAB']; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}

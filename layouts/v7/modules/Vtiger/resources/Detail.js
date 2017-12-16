@@ -197,6 +197,7 @@ Vtiger.Class("Vtiger_Detail_Js",{
             referenceModuleName : elem.data('ref-module'),
             subject : elem.data('subject'),
             contactId : elem.data('contact-id'),
+            status : elem.data('status'),
         };
 
         //Show quick create
@@ -219,7 +220,8 @@ Vtiger.Class("Vtiger_Detail_Js",{
             referenceModuleName : elem.data('ref-module'),
         	subject : elem.data('subject'),
             contactId : elem.data('contact-id'),
-            rescheduleReason : elem.data('reschedule-reason')
+            rescheduleReason : elem.data('reschedule-reason'),
+            status : elem.data('status'),
 		};
 
         //Set the Reschedule No
@@ -256,7 +258,9 @@ Vtiger.Class("Vtiger_Detail_Js",{
         customParams['activitytype'] = formParams.activityType;
         customParams['subject'] = formParams.subject;
 
-        formParams.status = 'Planned';
+        if(!formParams.status) {
+            formParams.status = 'Planned';
+        }
 
         //On Show
         app.event.on("post.QuickCreateForm.show",function(event,form){
@@ -410,24 +414,25 @@ Vtiger.Class("Vtiger_Detail_Js",{
                 param = {text:'Unable to update sales stage'};
                 app.helper.showAlertBox({'message' : param.text});
             } else if((data.result.missingMandatoryFields.length === 0)&&(data.result.missingMandatoryActivities.length === 0)&&(data.result.missingMandatoryRelatedRecords.length === 0)) {
-                param = {text:app.vtranslate('Mandatory Activities, Records & Fields Complete!')};
+                param = {text:app.vtranslate('Progressing to next sales stage..')};
                 app.helper.showSuccessNotification({'message' : param.text});
 				completionStatus.fields = true;
                 completionStatus.activities = true;
                 completionStatus.relatedRecords = true;
+                instance.updateSalesStage(formParams);
             } else {
-            	var text='The following actions are recommended:<br><br>';
+            	var text='The following actions are recommended before you proceed:<br><br>';
             	if(data.result.missingMandatoryFields.length !== 0) {
                     text = '<u><b>Fields</b></u><br><ul>'+data.result.missingMandatoryFields.map(el=>'<li>'+el+'</li>').join('')+'</ul>';
                     completionStatus.fields = false;
 				}
                 if(data.result.missingMandatoryActivities.length !== 0) {
-            		missingMandatoryActivityList = data.result.missingMandatoryActivities.map(el=>'<li>'+el.activityType+' : '+el.subject+' ('+el.missingCount+')'+'</li>').join('');
+            		missingMandatoryActivityList = data.result.missingMandatoryActivities.map(el=>'<li>Add '+'('+el.missingCount+') '+el.activityType+' : '+el.subject+'</li>').join('');
                     text += '<u><b>Activites</b></u><br><ul>'+missingMandatoryActivityList+'</ul>';
                     completionStatus.activities = false;
 				}
                 if(data.result.missingMandatoryRelatedRecords.length !== 0) {
-                    missingMandatoryRelatedRecordList = data.result.missingMandatoryRelatedRecords.map(el=>'<li>'+el.relatedModule+' : '+el.status+' ('+el.missingCount+')'+'</li>').join('');
+                    missingMandatoryRelatedRecordList = data.result.missingMandatoryRelatedRecords.map(el=>'<li>Add ('+el.missingCount+') '+el.relatedModule+' in ['+el.status.onCompletion+'] status'+'</li>').join('');
                     text += '<u><b>Related Records</b></u><br><ul>'+missingMandatoryRelatedRecordList+'</ul>';
                     completionStatus.relatedRecords = false;
                 }
@@ -472,11 +477,11 @@ Vtiger.Class("Vtiger_Detail_Js",{
             potential_id : elem.data('potential-id'),
             account_id : elem.data('account-id'),
             contact_id : elem.data('contact-id'),
+            quote_id : elem.data('quote-id'),
             subject : elem.data('subject')
         };
         urlParams[elem.data('status-field')] = elem.data('new-status');
         var urlString = url+'&'+jQuery.param(urlParams);
-        //console.log(urlString);
         window.location.href=urlString;
     },
 

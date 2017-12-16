@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-12 02:05:37
+<?php /* Smarty version Smarty-3.1.7, created on 2017-12-15 01:27:40
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Potentials\DetailViewHeaderTitle.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:188255a2f397170dc04-12247056%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:122505a33250ce62699-92128033%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '188255a2f397170dc04-12247056',
+  'nocache_hash' => '122505a33250ce62699-92128033',
   'function' => 
   array (
   ),
@@ -26,9 +26,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_5a2f39717ae30',
+  'unifunc' => 'content_5a33250ceb279',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5a2f39717ae30')) {function content_5a2f39717ae30($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a33250ceb279')) {function content_5a33250ceb279($_smarty_tpl) {?>
 <div class="recordBasicInfo"><div class="col-sm-7 col-lg-7 col-md-7 record-header"><div class="row"><div class="col-md-2 hidden-sm hidden-xs" style="max-width: 110px;"><div class="recordImage bgpotentials app-<?php echo $_smarty_tpl->tpl_vars['SELECTED_MENU_CATEGORY']->value;?>
 " style="position: unset"><div class="name"><span><strong> <i class="vicon-potentials"></i> </strong></span></div></div></div><div class="col-md-10 padding0px"><div class="visible-sm-block visible-xs-block" style="height: 70px"></div><h3 title="<?php echo $_smarty_tpl->tpl_vars['RECORD']->value->getName();?>
 " style="margin-top: 0px"><?php  $_smarty_tpl->tpl_vars['NAME_FIELD'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['NAME_FIELD']->_loop = false;

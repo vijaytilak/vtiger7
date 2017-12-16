@@ -120,6 +120,7 @@
                        data-ref-module="{$PROCESS['relatedModule']}"
                        data-contact-id="{$RECORD->get('contact_id')}"
                        data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - {$PROCESS['subject']}"
+                       data-status="{$PROCESS['status']['onCreate'][0]}"
                        onclick="Vtiger_Detail_Js.openQuickCreateActivity(this)"
                     ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;{$PROCESS['activityType']} : {$PROCESS['subject']}</a>
                 {/foreach}
@@ -135,27 +136,56 @@
                     {assign var=PARENT_RECORD_MODEL value=Vtiger_Record_Model::getInstanceById({$RECORD->get('id')}, {$MODULE_NAME})}
                     {assign var=RELATION_LIST_VIEW value=Vtiger_RelationListView_Model::getInstance($PARENT_RECORD_MODEL, {$PROCESS['relatedModule']})}
                     {assign var=RELATION_MODEL value=$RELATION_LIST_VIEW->getRelationModel()}
-
-                    <a href="#"
-                       class="badge {$HIGHLIGHT_CLASS} marginLeft10px marginRight10px"
-                       data-url="{$MODULEBASICLINKS[array_search('LBL_ADD_RECORD', array_column($MODULEBASICLINKS, 'linklabel'))]['linkurl']}"
-                       data-return-mode="showRelatedList"
-                       data-returntab-label="{$PROCESS['relatedModule']}"
-                       data-return-record="{$RECORD->get('id')}"
-                       data-return-module="{$MODULE_NAME}"
-                       data-return-view="Detail"
-                       data-return-related-modulename="{$PROCESS['relatedModule']}"
-                       data-return-relation-id="{$RELATION_MODEL->getId()}"
-                       data-relation-operation="TRUE"
-                       data-app="SALES"
-                       data-potential-id="{$RECORD->get('id')}"
-                       data-account-id="{$RECORD->get('related_to')}"
-                       data-contact-id="{$RECORD->get('contact_id')}"
-                       data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - {$PROCESS['subject']}"
-                       data-status-field="quotestage"
-                       data-new-status="Created"
-                       onclick="Vtiger_Detail_Js.openCreateRelatedRecord(this)"
-                    ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;New {vtlib_toSingular($PROCESS['relatedModule'])}</a>
+                    {*Show Create SO Buttons for all the accepted quotes*}
+                    {if $PROCESS['relatedModule'] eq 'SalesOrder'}
+                        {foreach item=QUOTE from=$QUOTES_ACCEPTED}
+                            <a href="#"
+                               class="badge {$HIGHLIGHT_CLASS} marginLeft10px marginRight10px"
+                               data-url="{$MODULEBASICLINKS[array_search('LBL_ADD_RECORD', array_column($MODULEBASICLINKS, 'linklabel'))]['linkurl']}"
+                               data-return-mode="showRelatedList"
+                               data-returntab-label="{$PROCESS['relatedModule']}"
+                               data-return-record="{$RECORD->get('id')}"
+                               data-return-module="{$MODULE_NAME}"
+                               data-return-view="Detail"
+                               data-return-related-modulename="{$PROCESS['relatedModule']}"
+                               data-return-relation-id="{$RELATION_MODEL->getId()}"
+                               data-relation-operation="TRUE"
+                               data-app="SALES"
+                               data-potential-id="{$RECORD->get('id')}"
+                               data-account-id="{$RECORD->get('related_to')}"
+                               data-contact-id="{$RECORD->get('contact_id')}"
+                               data-quote-id="{$QUOTE->get('id')}"
+                               data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - {$PROCESS['subject']}"
+                               data-status-field="{$PROCESS['statusFieldName']}"
+                               data-new-status="{$PROCESS['status']['onCreate'][0]}"
+                               onclick="Vtiger_Detail_Js.openCreateRelatedRecord(this)"
+                               title="{$QUOTE->get('subject')} (${$QUOTE->getDisplayValue('hdnGrandTotal')})"
+                            ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;New {vtlib_toSingular($PROCESS['relatedModule'])} ({$QUOTE->get('quote_no')})</a>
+                        {/foreach}
+                    {else}
+                        {*Show Create Buttons for the related Record*}
+                        <a href="#"
+                           class="badge {$HIGHLIGHT_CLASS} marginLeft10px marginRight10px"
+                           data-url="{$MODULEBASICLINKS[array_search('LBL_ADD_RECORD', array_column($MODULEBASICLINKS, 'linklabel'))]['linkurl']}"
+                           data-return-mode="showRelatedList"
+                           data-returntab-label="{$PROCESS['relatedModule']}"
+                           data-return-record="{$RECORD->get('id')}"
+                           data-return-module="{$MODULE_NAME}"
+                           data-return-view="Detail"
+                           data-return-related-modulename="{$PROCESS['relatedModule']}"
+                           data-return-relation-id="{$RELATION_MODEL->getId()}"
+                           data-relation-operation="TRUE"
+                           data-app="SALES"
+                           data-potential-id="{$RECORD->get('id')}"
+                           data-account-id="{$RECORD->get('related_to')}"
+                           data-contact-id="{$RECORD->get('contact_id')}"
+                           data-quote-id="{$RECORD->get('quote_id')}"
+                           data-subject="{end(explode( ' ', getContactName($RECORD->get('contact_id'))))} - {$PROCESS['subject']}"
+                           data-status-field="{$PROCESS['statusFieldName']}"
+                           data-new-status="{$PROCESS['status']['onCreate'][0]}"
+                           onclick="Vtiger_Detail_Js.openCreateRelatedRecord(this)"
+                        ><i title="Edit" class="fa fa-plus"></i>&nbsp;&nbsp;New {vtlib_toSingular($PROCESS['relatedModule'])}</a>
+                    {/if}
                 {/foreach}
 
                 {foreach item=QUOTE from=$QUOTES_PREPARED}
@@ -167,7 +197,7 @@
                        data-ref-record-id="{$QUOTE->get('id')}"
                        onclick="Vtiger_Detail_Js.openDocumentDesigner(this)"
                        title="{$QUOTE->get('subject')} (${$QUOTE->getDisplayValue('hdnGrandTotal')})"
-                    ><i title="Edit" class="fa fa-envelope-o"></i>&nbsp;&nbsp;Send Quote {$QUOTE->get('quote_no')}</a>
+                    ><i title="Edit" class="fa fa-envelope-o"></i>&nbsp;&nbsp;Email Quote ({$QUOTE->get('quote_no')})</a>
                 {/foreach}
             </div>
         </div>

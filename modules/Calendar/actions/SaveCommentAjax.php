@@ -54,7 +54,8 @@ class Calendar_SaveCommentAjax_Action extends Calendar_SaveAjax_Action {
         $response = new Vtiger_Response();
 
 	    $comment = $request->get('comment');
-	    $recordModel->set('description',$comment);
+	    $description = $recordModel->get('description');
+	    $recordModel->set('description',$description." [".$comment."]");
 	    $result = array("valid"=>TRUE,"created"=>TRUE,"activitytype"=>$activityType);
 
 		$_REQUEST['mode'] = 'edit';
