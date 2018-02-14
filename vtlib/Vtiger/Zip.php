@@ -29,7 +29,7 @@ class Vtiger_Zip extends dZip {
 		// For details on this workaround check here the ticket
 		// http://trac.vtiger.com/cgi-bin/trac.cgi/ticket/5298
 		$disk_file_size = filesize($zipfileName);
-		$zipfilesize = $disk_file_size + ($disk_file_size % 1024);
+		$zipfilesize = $disk_file_size;
 		header("Content-Length: ".$zipfilesize);
 		$fileContent = fread(fopen($zipfileName, "rb"), $zipfilesize);
 		echo $fileContent;	

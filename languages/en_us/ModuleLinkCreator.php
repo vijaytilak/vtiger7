@@ -39,6 +39,7 @@ $languageStrings = array(
     'LBL_EXIST_MODULE' => 'The module is exist',
     'LBL_VALID_MODULE' => 'The module is valid',
     'LBL_DOWNLOAD' => 'Download',
+    'LBL_ICON' => 'Module Icon',
     'LBL_EDIT_RELATED_FIELD' => 'Edit related field',
     'Welcome To Module & Link Creator' => 'Welcome To VTE Custom Module Builder',
 

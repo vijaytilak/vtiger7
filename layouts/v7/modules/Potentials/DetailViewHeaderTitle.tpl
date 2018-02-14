@@ -11,8 +11,8 @@
 -->*}
 {strip}
     {*vijay*}
-    <div class="recordBasicInfo">
-    <div class="col-sm-7 col-lg-7 col-md-7 record-header">
+    <div class="recordBasicInfo col-sm-7 col-lg-7 col-md-7">
+    <div class="record-header">
         <div class="row">
             <div class="col-md-2 hidden-sm hidden-xs" style="max-width: 110px;">
                 <div class="recordImage bgpotentials app-{$SELECTED_MENU_CATEGORY}" style="position: unset">

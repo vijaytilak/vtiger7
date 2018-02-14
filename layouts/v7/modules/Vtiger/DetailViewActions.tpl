@@ -74,6 +74,7 @@
             </div>
             {/if}        
         </div>
+        <div style="border: 1px solid red; height: 100%">ssdsd</div>
         <input type="hidden" name="record_id" value="{$RECORD->getId()}">
     </div>
 {strip}

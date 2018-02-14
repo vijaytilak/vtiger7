@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-15 02:06:16
+<?php /* Smarty version Smarty-3.1.7, created on 2017-12-19 04:09:49
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Vtiger\RecentComments.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:72465a332e18d6c998-31281777%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:242965a38910d4e5101-82970688%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '72465a332e18d6c998-31281777',
+  'nocache_hash' => '242965a38910d4e5101-82970688',
   'function' => 
   array (
   ),
@@ -51,9 +51,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_5a332e19122e0',
+  'unifunc' => 'content_5a38910d7435e',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5a332e19122e0')) {function content_5a332e19122e0($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a38910d7435e')) {function content_5a38910d7435e($_smarty_tpl) {?>
 <?php $_smarty_tpl->tpl_vars["COMMENT_TEXTAREA_DEFAULT_ROWS"] = new Smarty_variable("2", null, 0);?><?php $_smarty_tpl->tpl_vars["PRIVATE_COMMENT_MODULES"] = new Smarty_variable(Vtiger_Functions::getPrivateCommentModules(), null, 0);?><?php $_smarty_tpl->tpl_vars['IS_CREATABLE'] = new Smarty_variable($_smarty_tpl->tpl_vars['COMMENTS_MODULE_MODEL']->value->isPermitted('CreateView'), null, 0);?><?php $_smarty_tpl->tpl_vars['IS_EDITABLE'] = new Smarty_variable($_smarty_tpl->tpl_vars['COMMENTS_MODULE_MODEL']->value->isPermitted('EditView'), null, 0);?><div class="commentContainer recentComments"><div class="commentTitle"><?php if ($_smarty_tpl->tpl_vars['IS_CREATABLE']->value){?><div class="addCommentBlock"><div class="row"><div class=" col-lg-12"><div class="commentTextArea "><textarea name="commentcontent" class="commentcontent form-control mention_listener" placeholder="<?php echo vtranslate('LBL_POST_YOUR_COMMENT_HERE',$_smarty_tpl->tpl_vars['MODULE_NAME']->value);?>
 " rows="<?php echo $_smarty_tpl->tpl_vars['COMMENT_TEXTAREA_DEFAULT_ROWS']->value;?>
 "></textarea></div></div></div><div class='row'><div class="col-xs-6 pull-right paddingTop5 paddingLeft0"><div style="text-align: right;"><?php if (in_array($_smarty_tpl->tpl_vars['MODULE_NAME']->value,$_smarty_tpl->tpl_vars['PRIVATE_COMMENT_MODULES']->value)){?><div class="" style="margin: 7px 0;"><label><input type="checkbox" id="is_private" style="margin:2px 0px -2px 0px">&nbsp;&nbsp;<?php echo vtranslate('LBL_INTERNAL_COMMENT');?>
