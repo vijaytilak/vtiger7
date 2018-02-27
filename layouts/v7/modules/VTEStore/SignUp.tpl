@@ -20,12 +20,17 @@
                 </div>
                 <div class="control-group">
                     <label class="col-md-3 control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_FIRST_NAME', 'VTEStore')}</label>
-                    <div class="col-md-9"><input type="text" class="inputElement" style="max-width: 210px;" name="password" aria-required="true" data-rule-required="true" /></div>
+                    <div class="col-md-9"><input type="text" class="inputElement" style="max-width: 210px;" name="firstName" aria-required="true" data-rule-required="true" /></div>
                     <div class="clearfix"></div>
                 </div>
                 <div class="control-group">
                     <label class="col-md-3 control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_LAST_NAME', 'VTEStore')}</label>
                     <div class="col-md-9"><input type="text" class="inputElement" style="max-width: 210px;" name="lastName" aria-required="true" data-rule-required="true" /></div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="control-group">
+                    <label class="col-md-3 control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_PHONE', 'VTEStore')}</label>
+                    <div class="col-md-9"><input type="text" class="inputElement" style="max-width: 210px;" name="phone" aria-required="true" data-rule-required="true" /></div>
                     <div class="clearfix"></div>
                 </div>
                 <div class="control-group">

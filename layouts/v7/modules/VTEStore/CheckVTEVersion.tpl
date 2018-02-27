@@ -7,50 +7,37 @@
 * All Rights Reserved.
 *************************************************************************************}
 {strip}
-    <div class="editContainer" style="padding-left: 3%;padding-right: 3%">
+    <div class="editContainer" style="padding-left: 3%;padding-right: 3%; text-align: center;">
         <h3>
-            {vtranslate('MODULE_LBL',$QUALIFIED_MODULE)}
+            {vtranslate('Extension Pack Engine Update Required',$QUALIFIED_MODULE)}
         </h3>
         <hr>
-        <div id="breadcrumb">
-            <ul class="crumbs marginLeftZero">
-                <li class="first step active"  style="z-index:9" id="step1">
-                    <a>
-                        <span class="stepNum">&nbsp;</span>
-                        <span class="stepText">{vtranslate('VTEStore Update Required',$QUALIFIED_MODULE)}</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
         <div class="clearfix"></div>
     </div>
     <div class="workFlowContents" style="padding-left: 3%;padding-right: 3%">
-            <div class="padding1per" style="border:1px solid #ccc; padding: 1%;">
-                <label>
-                    <strong>{vtranslate('VTEStore Update Required',$QUALIFIED_MODULE)}</strong>
-                </label>
-                <br>
-                <div class="control-group">
-                    <div><span>{vtranslate('out of date',$QUALIFIED_MODULE)}</span></div>
-                    <div><span>{vtranslate('LBL_THE_UPGRADE_WILL_NOT_IMPACT',$QUALIFIED_MODULE)}</span></div>
-                </div>
-
-
-                <div class="control-group">
-                    <div><span><button style="" id="UpgradeVTEStore" class="btn btn-success UpgradeVTEStore" data-message="{vtranslate('LBL_MESSAGE_UPGRAGE_VTE_STORE_TO_LASTEST', 'VTEStore')}" data-svn="lastest">{vtranslate('LBL_UPGRADE_VTE_STORE', 'VTEStore')}</button></span></div>
-                </div>
-
-                <div class="control-group">
-                    <div><span>{vtranslate('LBL_HAVE_TROUBLE',$QUALIFIED_MODULE)} {vtranslate('LBL_CONTACT_US',$QUALIFIED_MODULE)}</span></div>
-                </div>
-                <div class="control-group">
-                    <ul style="padding-left: 10px;">
-                        <li>{vtranslate('LBL_EMAIL',$QUALIFIED_MODULE)}: &nbsp;&nbsp;<a href="mailto:Support@VTExperts.com">Support@VTExperts.com</a></li>
-                        <li>{vtranslate('LBL_PHONE',$QUALIFIED_MODULE)}: &nbsp;&nbsp;<span>+1 (818) 495-5557</span></li>
-                        <li>{vtranslate('LBL_CHAT',$QUALIFIED_MODULE)}: &nbsp;&nbsp;{vtranslate('LBL_AVAILABLE_ON',$QUALIFIED_MODULE)} <a href="http://www.vtexperts.com" target="_blank">http://www.VTExperts.com</a></li>
-                    </ul>
-                </div>
+        <div class="padding1per" style="padding: 1% 10% 1% 10%;">
+            <div class="control-group">
+                <div><span>{vtranslate('Update_Text',$QUALIFIED_MODULE)}</span></div>
             </div>
+
+            <br><br><br>
+            <table style="width: 100%">
+                <tr>
+                    <td></td>
+                    <td style="width: 350px;">
+                        <div style=""><button style="text-align: center; width: 250px;" id="UpgradeVTEStore" class="btn btn-success UpgradeVTEStore" data-message="{vtranslate('LBL_MESSAGE_UPGRAGE_VTE_STORE_TO_LASTEST', 'VTEStore')}" data-svn="lastest"><strong>{vtranslate('Continue', 'VTEStore')}</strong></button></span></div>
+                        <br><br>
+                        <div><span>{vtranslate('LBL_HAVE_TROUBLE',$QUALIFIED_MODULE)} {vtranslate('LBL_CONTACT_US',$QUALIFIED_MODULE)}</span></div>
+                        <ul style="padding-left: 10px;">
+                            <li>{vtranslate('LBL_EMAIL',$QUALIFIED_MODULE)}: &nbsp;&nbsp;<a href="mailto:Support@VTExperts.com">Support@VTExperts.com</a></li>
+                            <li>{vtranslate('LBL_PHONE',$QUALIFIED_MODULE)}: &nbsp;&nbsp;<span>+1 (818) 495-5557</span></li>
+                            <li>{vtranslate('LBL_CHAT',$QUALIFIED_MODULE)}: &nbsp;&nbsp;{vtranslate('LBL_AVAILABLE_ON',$QUALIFIED_MODULE)} <a href="http://www.vtexperts.com" target="_blank">http://www.VTExperts.com</a></li>
+                        </ul>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
     </div>
     <div class="clearfix"></div>
 </div>

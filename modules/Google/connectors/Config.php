@@ -5,8 +5,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+//Vijay
 Class Google_Config_Connector {
-    static $clientId = '';
-    static $clientSecret = '';
+    static $clientId = '248273508605-9hi9h6mafegem9ebr6kcsan619vf04h9.apps.googleusercontent.com';
+    static $clientSecret = 'CAxo9jFlomIljUNrm8WrRUIU';
 }

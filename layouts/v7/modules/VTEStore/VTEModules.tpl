@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="row-fluid">
                                     <div class="text-right">
-                                        <a class="grouped_elements" href="{$VTEMODULE->image}" rel="group{$VTEMODULE->id}"><button id="Preview{$VTEMODULE->module_name}" class="btn btn-warning" style="margin-right:5px;">{vtranslate('LBL_PREVIEW', 'VTEStore')}</button></a>
+                                        <a class="grouped_elements" href="{$VTEMODULE->image}" rel="group{$VTEMODULE->id}"><button id="Preview{$VTEMODULE->module_name}" class="btn btn-warning" style="margin-right:1px;">{vtranslate('LBL_PREVIEW', 'VTEStore')}</button></a>
                                         <div style="display: none">
                                             {assign var=previewImages value="||"|explode:$VTEMODULE->preview_image}
                                             {foreach item=previewImage from=$previewImages}
@@ -138,9 +138,10 @@
                                             </script>
                                         {/literal}
                                         <a id="VideoDemo{$VTEMODULE->module_name}" href="{$VTEMODULE->extvideolink}" class="btn iframe various icon-video" ></a>
-                                        <button id="MoreDetail{$VTEMODULE->module_name}" class="btn btnMoreDetail addButton" style="margin: 0px 8px;">{vtranslate('LBL_MORE_DETAILS', 'VTEStore')}</button>
+                                        <button id="MoreDetail{$VTEMODULE->module_name}" class="btn btnMoreDetail addButton" style="margin: 0px 5px;">{vtranslate('LBL_MORE_DETAILS', 'VTEStore')}</button>
                                         {if in_array($VTEMODULE->module_name,$VTMODULES)}
                                             <button id="Installed{$VTEMODULE->module_name}" class="btn btn {if $CUSTOMERLOGINED>0}authenticated{else}loginRequired{/if}">{vtranslate('LBL_INSTALLED', 'VTEStore')}</button>
+                                            {*<button id="Installed{$VTEMODULE->module_name}" class="btn btn-primary HealthCheck" data-url="index.php?module=VTEStore&parent=Settings&view=HealthCheck&extensionId={$VTEMODULE->id}&extensionName={$VTEMODULE->module_name}">{vtranslate('Health Check', 'VTEStore')}</button>*}
                                         {else}
                                             <button id="Install{$VTEMODULE->module_name}" class="oneclickInstallFree btn {if $CUSTOMERLOGINED>0}btn-success authenticated{else}loginRequired{/if}" data-svn="stable">{vtranslate('LBL_INSTALL', 'VTEStore')}</button>
                                         {/if}

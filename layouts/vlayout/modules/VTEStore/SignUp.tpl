@@ -24,6 +24,10 @@
             <div class="controls"><input type="text" name="lastName" data-validation-engine="validate[required, funcCall[Vtiger_Base_Validator_Js.invokeValidation]]"/></div>
         </div>
         <div class="control-group">
+            <span class="control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_PHONE', 'VTEStore')}</span>
+            <div class="controls"><input type="text" name="phone" data-validation-engine="validate[required, funcCall[Vtiger_Base_Validator_Js.invokeValidation]]"/></div>
+        </div>
+        <div class="control-group">
             <span class="control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_COMPANY_NAME', 'VTEStore')}</span>
             <div class="controls"><input type="text" name="companyName" data-validation-engine="validate[required, funcCall[Vtiger_Base_Validator_Js.invokeValidation]]"/></div>
         </div>

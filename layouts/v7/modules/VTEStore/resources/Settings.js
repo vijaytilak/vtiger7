@@ -200,7 +200,7 @@ Vtiger.Class("VTEStore_Settings_Js",{
 
                                     remoteForm.submit();
                                     // Post data to hatchbuck END
-                                    openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
+                                    //openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
 
                                     setTimeout(function(){
                                         location.reload();
@@ -807,6 +807,26 @@ Vtiger.Class("VTEStore_Settings_Js",{
         });
     },
 
+    registerHealthCheckBtn : function() {
+        var thisInstance = this;
+        jQuery('.HealthCheck').prop('onclick',null).off('click');
+        jQuery('.HealthCheck').on('click', function(event){
+            app.helper.showProgress();
+            var url = jQuery(this).data('url');
+            app.request.post({"url":url}).then(
+                function(err,data){
+                    if(err === null) {
+                        app.helper.showModal( data ,{'cb' : function (data){
+                            app.helper.hideProgress();
+                        }});
+                    }else{
+                    }
+                }
+            );
+
+        });
+    },
+
     // Extension Detail BEGIN
     ExtensionDetails: function (element) {
         var thisInstance = this;
@@ -825,6 +845,7 @@ Vtiger.Class("VTEStore_Settings_Js",{
     registerEvents : function() {
         var detailContentsHolder = jQuery('.settingsPageDiv');
         this.registerEventsForVTEStore(detailContentsHolder);
+        this.registerHealthCheckBtn();
     }
 });
 jQuery(document).ready(function() {

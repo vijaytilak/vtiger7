@@ -105,12 +105,12 @@ jQuery(document).ready(function () {
                         var addLiTag=0;
                         if(VTPremiumHeader.version=='1.0.0'){
                             var bgColor='fff';
-                            var msg='VTiger Extension package installation has not been completed.';
+                            var msg='Extension Pack installation has not been completed.';
                             var btn='<button class="btn btn-warning" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Complete Install</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid==''){
                             var bgColor='fff';
-                            var msg='VTiger Extension package has been installed. Please login/create an account to get started.';
+                            var msg='Extension Pack has been installed. Please login/create an account to get started.';
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Login/Create Account</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid>0 && VTPremiumHeader.customer_status=='no_subscription'){

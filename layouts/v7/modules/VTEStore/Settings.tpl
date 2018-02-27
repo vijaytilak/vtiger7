@@ -17,7 +17,7 @@
         margin-bottom: 10px !important;
     }
     .btn{
-        padding: 5px 10px!important;
+        padding: 5px 3px!important;
     }
 </style>
 <div class="container-fluid">

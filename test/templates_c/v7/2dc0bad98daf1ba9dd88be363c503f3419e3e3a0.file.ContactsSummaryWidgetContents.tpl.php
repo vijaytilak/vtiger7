@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-20 21:42:57
+<?php /* Smarty version Smarty-3.1.7, created on 2018-02-22 04:10:14
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Vtiger\ContactsSummaryWidgetContents.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:4585a3ad9612e2fe6-20482236%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:313835a8e42a694a2b7-61627511%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '4585a3ad9612e2fe6-20482236',
+  'nocache_hash' => '313835a8e42a694a2b7-61627511',
   'function' => 
   array (
   ),
@@ -26,9 +26,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_5a3ad96136208',
+  'unifunc' => 'content_5a8e42a69c025',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5a3ad96136208')) {function content_5a3ad96136208($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a8e42a69c025')) {function content_5a8e42a69c025($_smarty_tpl) {?>
 <div class="relatedContacts container-fluid"><?php  $_smarty_tpl->tpl_vars['RELATED_RECORD'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['RELATED_RECORD']->_loop = false;
  $_from = $_smarty_tpl->tpl_vars['RELATED_RECORDS']->value; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
 foreach ($_from as $_smarty_tpl->tpl_vars['RELATED_RECORD']->key => $_smarty_tpl->tpl_vars['RELATED_RECORD']->value){

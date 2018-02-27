@@ -63,7 +63,8 @@ $(document).ready(function() {
                     <input type="hidden" name="extensionName" value="{$MODULE_DETAIL->module_name}" />
                     <input type="hidden" name="moduleAction" value="{if in_array($MODULE_DETAIL->module_name,$VTMODULES)}Upgrade{else}Install{/if}">
                     {if in_array($MODULE_DETAIL->module_name,$VTMODULES)}
-                        <a id="UpgradeTooltip" title="{vtranslate('LBL_UPGRADE_TOOLTIP', 'VTEStore')}" class="pull-left UpgradeTooltip" style="margin-right: 10px;"><i class="glyphicon glyphicon-question-sign" style="font-size: 20px; line-height: 30px;"></i> </a>
+                        {*<button id="Installed{$MODULE_DETAIL->module_name}" class="btn btn-primary HealthCheck" data-url="index.php?module=VTEStore&parent=Settings&view=HealthCheck&extensionId={$MODULE_DETAIL->id}&extensionName={$MODULE_DETAIL->module_name}">{vtranslate('Health Check', 'VTEStore')}</button>*} &nbsp;
+                        <a id="UpgradeTooltip" title="{vtranslate('LBL_UPGRADE_TOOLTIP', 'VTEStore')}" class="UpgradeTooltip" style="margin-right: 10px;"><i class="alignMiddle glyphicon glyphicon-question-sign" style="font-size: 20px; line-height: 30px;"></i> </a>
                         <div class="dropdown" style="display: inline-block;">
                             <button id="Upgrade{$MODULE_DETAIL->module_name}" class="btn btn-warning dropdown-toggle {if $CUSTOMERLOGINED>0} authenticated{else}loginRequired{/if}" type="button" data-toggle="dropdown">{vtranslate('LBL_UPGRADE', 'VTEStore')}
                             <span class="caret"></span></button>

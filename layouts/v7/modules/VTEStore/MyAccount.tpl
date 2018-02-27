@@ -33,6 +33,11 @@
                 <div class="clearfix"></div>
             </div>
             <div class="control-group">
+                <label class="col-md-4 control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_PHONE', 'VTEStore')}</label>
+                <div class="col-md-8"><input type="text" class="inputElement" value="{$CUSTOMERDATA.phone}" style="max-width: 400px;" name="phone" aria-required="true" data-rule-required="true" /></div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="control-group">
                 <label class="col-md-4 control-label"><span class="redColor">*</span>&nbsp;{vtranslate('LBL_COMPANY_NAME', 'VTEStore')}</label>
                 <div class="col-md-8"><input type="text" class="inputElement" value="{$CUSTOMERDATA.companyname}" style="max-width: 400px;" name="companyName" aria-required="true" data-rule-required="true" /></div>
                 <div class="clearfix"></div>

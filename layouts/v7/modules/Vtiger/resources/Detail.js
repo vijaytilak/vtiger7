@@ -573,6 +573,62 @@ Vtiger.Class("Vtiger_Detail_Js",{
         );
     },
 
+    /**
+     * Vijay
+     * @param recordId
+     * @param callback
+     */
+    createTeamDrive : function(buttonElement){
+        var elem = jQuery(buttonElement);
+
+        window.open('index.php?module=Google&action=CreateOpportunityFolder&sourceModule=Potentials&record='+elem.data('opportunity-record'),'_blank','toolbar=no,scrollbars=no,resizable=no,width=600px,height=500px,top=200,left=500');
+
+        /*var params = {
+            module : "Google",
+            action : "CreateOpportunityFolder",
+            record : elem.data('opportunity-record')
+        };
+
+        app.helper.showProgress();
+        app.request.get({'data': params}).then(
+            function (data) {
+                app.helper.hideProgress();
+                console.log(data);
+                console.log(data.result);
+                console.log('trying to get data..');
+                if (data.result.created) {
+                    app.helper.showSuccessNotification({'message' : 'Team Drive Folder creation Successful!' +
+                        ' : '+data.result.createdFolderId});
+
+                }
+            }
+        );*/
+
+
+    },
+
+    /**
+     * Vijay
+     * @param recordId
+     * @param callback
+     */
+    openTeamDrive : function(buttonElement){
+        var instance = this;
+        var elem = jQuery(buttonElement);
+        var params = {
+            teamDriveFolderId : elem.data('team-drive-folder-id'),
+            potential_id : elem.data('opportunity-record'),
+        };
+
+        if(params.teamDriveFolderId) {
+            window.open('https://drive.google.com/drive/folders/'+params.teamDriveFolderId);
+            return;
+        } else {
+            app.helper.showErrorNotification({'message' : 'This opportunity is not linked to any Team Drive Folder'});
+            return;
+        }
+    },
+
     /**vijay
      *
      */

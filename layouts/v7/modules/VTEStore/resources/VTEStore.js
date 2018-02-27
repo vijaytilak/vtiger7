@@ -10,7 +10,7 @@ jQuery(document).ready(function () {
 
                     // Hide all our extensions link on other setting panel
                     jQuery('.widgetContainer a[class*="menuItemLabel"]').each(function( index ) {
-                        if(OtherSetting.use_custom_header==1 && jQuery(this).text()=='VTiger Premium'){
+                        if(OtherSetting.use_custom_header==1 && (jQuery(this).text()=='VTiger Premium' || jQuery(this).text()=='Extension Pack')){
                             jQuery(this).text('Premium');
                         }
                         if(VTEExtensions.indexOf(jQuery(this).text())!==-1){
@@ -27,7 +27,7 @@ jQuery(document).ready(function () {
                                     "<div class='settingsgroup-accordion'>",
                                         "<a data-toggle='collapse' data-parent='#accordion' class='collapsed' href='#newVtePrimiumPannelWidget'>",
                                             "<i class='indicator fa fa-chevron-right '></i>&nbsp;",
-                                            "<span>VTiger Premium</span>",
+                                            "<span>Extension Pack</span>",
                                         "</a>",
                                     "</div>",
                                 "</div>",
@@ -97,15 +97,15 @@ jQuery(document).ready(function () {
             function(err,data){
                 if(err === null) {
                     var VTPremiumHeader = data.VTPremiumHeader;
-                    if(VTPremiumHeader.showHeaderIcon==1){
+                    if(VTPremiumHeader != undefined && VTPremiumHeader.showHeaderIcon==1){
                         var addLiTag=0;
                         var bgColor='ddd';
                         if(VTPremiumHeader.version=='1.0.0'){
-                            var msg='VTiger Extension package installation has not been completed.';
+                            var msg='Extension Pack installation has not been completed.';
                             var btn='<button class="btn btn-warning" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Complete Install</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid==''){
-                            var msg='VTiger Extension package has been installed. Please login/create an account to get started.';
+                            var msg='Extension Pack has been installed. Please login/create an account to get started.';
                             var btn='<button class="btn btn-success" style="margin-right:5px;" onclick="location.href=\'index.php?module=VTEStore&parent=Settings&view=Settings\'">Login/Create Account</button>';
                             addLiTag=1;
                         }else if(VTPremiumHeader.customerid>0 && VTPremiumHeader.customer_status=='no_subscription'){

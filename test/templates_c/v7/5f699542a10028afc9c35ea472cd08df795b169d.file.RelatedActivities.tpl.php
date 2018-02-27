@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2017-12-19 04:09:46
+<?php /* Smarty version Smarty-3.1.7, created on 2018-02-22 04:10:03
          compiled from "C:\xampp\htdocs\vtiger7\vtigercrm\includes\runtime/../../layouts/v7\modules\Vtiger\RelatedActivities.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:100865a38910a06c552-52081158%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:59745a8e429b22b975-00948880%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '100865a38910a06c552-52081158',
+  'nocache_hash' => '59745a8e429b22b975-00948880',
   'function' => 
   array (
   ),
@@ -38,9 +38,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_5a38910a1c93a',
+  'unifunc' => 'content_5a8e429b37d78',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5a38910a1c93a')) {function content_5a38910a1c93a($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_5a8e429b37d78')) {function content_5a8e429b37d78($_smarty_tpl) {?>
 <?php $_smarty_tpl->tpl_vars['MODULE_NAME'] = new Smarty_variable("Calendar", null, 0);?><div class="summaryWidgetContainer"><div class="widget_header clearfix"><h4 class="display-inline-block pull-left"><?php echo vtranslate('LBL_ACTIVITIES',$_smarty_tpl->tpl_vars['MODULE_NAME']->value);?>
 </h4><?php $_smarty_tpl->tpl_vars['CALENDAR_MODEL'] = new Smarty_variable(Vtiger_Module_Model::getInstance('Calendar'), null, 0);?><div class="pull-right" style="margin-top: -5px;"><?php if ($_smarty_tpl->tpl_vars['CALENDAR_MODEL']->value->isPermitted('CreateView')){?><button class="btn addButton btn-sm btn-default createActivity toDotask textOverflowEllipsis max-width-100" title="<?php echo vtranslate('LBL_ADD_TASK',$_smarty_tpl->tpl_vars['MODULE_NAME']->value);?>
 " type="button" href="javascript:void(0)" data-url="sourceModule=<?php echo $_smarty_tpl->tpl_vars['RECORD']->value->getModuleName();?>

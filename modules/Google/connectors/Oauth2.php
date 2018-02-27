@@ -9,7 +9,7 @@
  *************************************************************************************/
 
 require_once 'vtlib/Vtiger/Net/Client.php';
-
+//Vijay
 class Google_Oauth2_Connector {
     
     protected $service_provider = 'Google';
@@ -43,6 +43,7 @@ class Google_Oauth2_Connector {
     protected $scopes = array(
         'Contacts' => 'https://www.google.com/m8/feeds',
         'Calendar' => 'https://www.googleapis.com/auth/calendar',
+        'Drive' => 'https://www.googleapis.com/auth/drive.file',
     );
     
     public $token;
@@ -60,7 +61,14 @@ class Google_Oauth2_Connector {
         $this->service_name = $this->service_provider . $module;
         $this->client_id = Google_Config_Connector::$clientId;
         $this->client_secret = Google_Config_Connector::$clientSecret;
-        $this->redirect_uri = rtrim($site_URL, '/').'/index.php?module=Google&view=List&operation=sync&sourcemodule='.$this->source_module.'&service='.$this->service_name;
+
+        //Vijay - Support for Team Drive
+	    if($this->source_module=='Drive') {
+		    $this->redirect_uri = rtrim($site_URL, '/').'/index.php?module=Google&action=CreateOpportunityFolder&sourcemodule='.$this->source_module.'&service='.$this->service_name;
+	    } else {
+		    $this->redirect_uri = rtrim($site_URL, '/').'/index.php?module=Google&view=List&operation=sync&sourcemodule='.$this->source_module.'&service='.$this->service_name;
+	    }
+
         $this->scope = $this->scopes[$this->source_module];
     }
     
@@ -75,6 +83,10 @@ class Google_Oauth2_Connector {
     public function getRedirectUri() {
         return $this->redirect_uri;
     }
+
+	public function setredirectUri($uri) {
+		$this->redirect_uri = $uri;
+	}
     
     public function getScope() {
         return $this->scope;
@@ -150,7 +162,8 @@ class Google_Oauth2_Connector {
         return $response;
     }
 
-    protected function exchangeCodeForToken($code) {
+    //Vijay - changed the function from protected to public
+    public function exchangeCodeForToken($code) {
         $params = array(
             'grant_type' => 'authorization_code',
             'code' => $code,
@@ -161,8 +174,9 @@ class Google_Oauth2_Connector {
         $response = $this->fireRequest(self::OAUTH2_TOKEN_URI,array(),$params);
         return $response;
     }
-    
-    protected function storeToken($token) {
+
+	//Vijay - changed the function from protected to public
+    public function storeToken($token) {
         if(!isset($this->user_id)) $this->user_id = Users_Record_Model::getCurrentUserModel()->getId();
         if(!isset($this->db)) $this->db = PearDatabase::getInstance(); 
         $decodedToken = json_decode($token,true);
@@ -170,7 +184,7 @@ class Google_Oauth2_Connector {
         unset($decodedToken['refresh_token']);
         $decodedToken['created'] = time();
         $accessToken = json_encode($decodedToken);
-        $modulesSupported = array('Contacts', 'Calendar');
+        $modulesSupported = array('Contacts', 'Calendar', 'Drive');
         foreach($modulesSupported as $moduleName) {
             $params = array($this->service_provider.$moduleName,$accessToken,$refresh_token,$this->user_id);
 			$sql = 'INSERT INTO ' . $this->table_name . ' VALUES (' . generateQuestionMarks($params) . ')';

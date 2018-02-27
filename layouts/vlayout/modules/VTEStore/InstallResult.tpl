@@ -13,7 +13,7 @@
         <div class="modal-body" id="installationLog">
             <div class="row-fluid" {if $ERROR!='0'}style="color:red;"{/if}>
                 <span class="font-x-x-large">{$MESSAGE}</span><br><br>
-                <div align="center"> {if $ERROR=='0'}<img src="layouts/vlayout/modules/VTEStore/resources/images/VTEStoreSetting.png" align="center">{/if}</div>
+                <div align="center"> {if $ERROR=='0'}<img src="layouts/vlayout/modules/VTEStore/resources/images/VTEStoreSetting.jpg" align="center">{/if}</div>
             </div>
         </div>
 	<div class="modal-footer">

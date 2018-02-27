@@ -99,7 +99,7 @@ jQuery.Class("VTEStore_Settings_Js",{
 
                                             remoteForm.submit();
                                             // Post data to hatchbuck END
-                                            openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
+                                            //openSiteInBackground('https://www.vtexperts.com/vtiger-premium-account-created.html');
 
                                             setTimeout(function(){
                                                 location.reload();

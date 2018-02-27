@@ -72,9 +72,21 @@
                     <i class="fa fa-chevron-right"></i>
                 </button>
             </div>
-            {/if}        
+            {/if}
+            {*Vijay- Team Drive Support*}
+            {if $MODULE eq 'Potentials'}
+            <div class="row">
+                <div class="col-md-12 textAlignCenter" style="border: 1px solid #eee; background:#fcfcfc; height:100%">
+                    {if empty($RECORD->get('cf_1528'))}
+                    <a id="createTeamDriveBtn" href="#" class="btn btn-warning marginTop10px marginBottom10px" data-opportunity-record="{$RECORD->getId()}" onclick="Vtiger_Detail_Js.createTeamDrive(this)"><i title="Create Team Drive" class="fa fa-folder-open"></i>&nbsp;&nbsp;Create Team Drive Folder</a>
+                    {else}
+                    <a href="#" class="btn btn-primary marginTop10px marginBottom10px" data-team-drive-folder-id="{$RECORD->get('cf_1528')}" data-opportunity-record="{$RECORD->getId()}" onclick="Vtiger_Detail_Js.openTeamDrive(this)"><i title="Open Team Drive" class="fa fa-folder-open"></i>&nbsp;&nbsp;Open Team Drive Folder</a>
+                    {/if}
+                    {*<iframe id="google_drive_iframe" src="https://drive.google.com/drive/folders/0B5U_nfdrl8Y3R0FRQzdiblgtZGM#list" width="100%" height="180px" frameborder="0" scrolling="no" style="oveflow: visible"></iframe>*}
+                </div>
+            </div>
+            {/if}
         </div>
-        <div style="border: 1px solid red; height: 100%">ssdsd</div>
         <input type="hidden" name="record_id" value="{$RECORD->getId()}">
     </div>
 {strip}
